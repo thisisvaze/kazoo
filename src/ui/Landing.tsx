@@ -4,7 +4,7 @@ import { WatercolorButton } from '@/components/ui/watercolor-button';
 import { SkuzicLogo } from '@/components/SkuzicLogo';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import type { Theme } from './Settings';
-import { INK_ALPHA, PENCIL, makeGrainTile, outlinePath, seeded } from './DrawCanvas';
+import { INK_ALPHA, PENCIL, outlinePath, seeded } from './DrawCanvas';
 import './landing.css';
 
 const GITHUB = 'https://github.com/thisisvaze/skuzic';
@@ -304,14 +304,8 @@ export function Landing({
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
 }) {
-  // The studio's paper tooth, made once and used as a mask by everything drawn here.
-  const [grain] = useState(() => `url(${makeGrainTile().toDataURL()})`);
-
   return (
-    <div
-      className="landing experiment fixed inset-0 z-50 overflow-y-auto"
-      style={{ '--grain': grain } as React.CSSProperties}
-    >
+    <div className="landing experiment fixed inset-0 z-50 overflow-y-auto">
       <div className="experiment-sheet">
         <Header theme={theme} onThemeChange={onThemeChange} />
         <Hero onStart={onStart} returning={returning} demo={demo} />

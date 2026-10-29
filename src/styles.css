@@ -195,8 +195,8 @@ dialog::backdrop {
   }
 }
 
-/* The studio's paper tooth (set as --grain by Landing), so every line drawn on
-   the page reads as coloured pencil. */
+/* The studio's paper tooth (set on the root as --grain, in main.tsx), so every
+   line drawn on the page, and the logo, reads as coloured pencil. */
 .pencil {
   -webkit-mask-image: var(--grain);
   mask-image: var(--grain);

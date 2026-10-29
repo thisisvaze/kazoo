@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-/** The skuzic mark, a bold scribble running into three bars, in the shared orange, pink and violet ink. */
+/** The skuzic mark, a bold scribble running into three bars, in the studio's orange, pink and violet pencils on paper. */
 export function SkuzicLogo({
   compact = false,
   className,
@@ -16,13 +16,13 @@ export function SkuzicLogo({
       className={cn('inline-flex shrink-0 items-center gap-2.5', className)}
     >
       <img
-        src="/brand/skuzic-mark.svg"
+        src="/brand/skuzic-mark-pencil.svg"
         width="38"
         height="28"
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="h-7 w-[2.377rem] shrink-0"
+        className="pencil h-7 w-[2.377rem] shrink-0"
       />
       <span
         aria-hidden="true"
