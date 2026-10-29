@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import getStroke from 'perfect-freehand';
-import { TouchEngine } from '@/audio/touch';
 import { WatercolorButton } from '@/components/ui/watercolor-button';
 import { SkuzicLogo } from '@/components/SkuzicLogo';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
@@ -11,168 +10,10 @@ import './landing.css';
 const GITHUB = 'https://github.com/thisisvaze/skuzic';
 const REPO_API = 'https://api.github.com/repos/thisisvaze/skuzic';
 
-/** The studio's own pencil colours (DrawCanvas), without its black, grey and brown, in the order the wall hands them out. */
+/** The studio's own pencil colours (DrawCanvas), without its black, grey and brown. */
 const INKS = ['#2d7dd2', '#e2711d', '#7c3aed', '#6a994e', '#e26d9e', '#1b998b', '#d1495b', '#f0a202', '#3d348b'];
 const [BLUE, ORANGE, , , , TEAL, RED, AMBER, INDIGO] = INKS;
 const BROWN = '#8b5a2b';
-
-/** A touch bolder than the studio's default nib, so a first line reads at a glance. */
-const NIB = 6;
-
-interface Line {
-  /** [x, y, pressure] in CSS px from the wall's top-left. */
-  points: number[][];
-  /** A mouse or finger reports no real pressure, so width follows speed instead. */
-  simulate: boolean;
-  color: string;
-}
-
-/**
- * The live wall: every line is the studio's coloured pencil, and the pen's own
- * sound engine plays it, the same one the studio uses. Built on the first
- * stroke, inside that gesture, so the browser lets it play. The paper tooth is
- * a CSS mask (`.pencil`), so the canvas only lays down colour.
- */
-function Wall() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const lines = useRef<Line[]>([]);
-  const live = useRef<Line | null>(null);
-  const base = useRef<HTMLCanvasElement | null>(null);
-  const dpr = useRef(1);
-  const touch = useRef<TouchEngine | null>(null);
-  const frame = useRef(0);
-  const pointer = useRef<number | null>(null);
-
-  useEffect(() => {
-    // Nulled as well as closed: StrictMode remounts, and a closed context can't be reused.
-    return () => {
-      touch.current?.close();
-      touch.current = null;
-    };
-  }, []);
-
-  const paint = (ctx: CanvasRenderingContext2D, { points, simulate, color }: Line) => {
-    ctx.globalAlpha = INK_ALPHA;
-    ctx.fillStyle = color;
-    ctx.fill(outlinePath(getStroke(points, { ...PENCIL, size: NIB, simulatePressure: simulate })));
-    ctx.globalAlpha = 1;
-  };
-
-  const present = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx || !base.current) return;
-    const w = canvas.width / dpr.current;
-    const h = canvas.height / dpr.current;
-    ctx.clearRect(0, 0, w, h);
-    ctx.drawImage(base.current, 0, 0, w, h);
-    if (live.current) paint(ctx, live.current);
-  };
-
-  const schedule = () => {
-    frame.current ||= requestAnimationFrame(() => {
-      frame.current = 0;
-      present();
-    });
-  };
-
-  /** Committed lines live on a copy, so a live stroke costs one blit a frame. */
-  const rebuild = () => {
-    const ctx = base.current?.getContext('2d');
-    if (!ctx || !base.current) return;
-    ctx.clearRect(0, 0, base.current.width, base.current.height);
-    for (const line of lines.current) paint(ctx, line);
-  };
-
-  // Lines keep the size they were drawn at: a wider window shows more wall.
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const fit = () => {
-      const { width, height } = canvas.getBoundingClientRect();
-      const d = window.devicePixelRatio || 1;
-      dpr.current = d;
-      for (const c of [canvas, (base.current ??= document.createElement('canvas'))]) {
-        c.width = Math.max(1, Math.round(width * d));
-        c.height = Math.max(1, Math.round(height * d));
-        c.getContext('2d')?.scale(d, d);
-      }
-      rebuild();
-      present();
-    };
-    fit();
-    const observer = new ResizeObserver(fit);
-    observer.observe(canvas);
-    const onResize = () => fit();
-    window.addEventListener('resize', onResize);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', onResize);
-      cancelAnimationFrame(frame.current);
-      frame.current = 0;
-    };
-    // Mount only: everything it calls reads through refs.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const down = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (pointer.current !== null || (e.pointerType === 'mouse' && e.button !== 0)) return;
-    pointer.current = e.pointerId;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const pressure = e.pressure || 0.5;
-    // Every line picks up the next pencil in the box.
-    const color = INKS[lines.current.length % INKS.length];
-    live.current = { points: [[x, y, pressure]], simulate: e.pointerType !== 'pen', color };
-    touch.current ??= new TouchEngine();
-    touch.current.down(x, y, pressure, e.timeStamp, rect.width, rect.height);
-    schedule();
-  };
-
-  const move = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (pointer.current !== e.pointerId) return;
-    const line = live.current;
-    if (!line) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const raw = typeof e.nativeEvent.getCoalescedEvents === 'function' ? e.nativeEvent.getCoalescedEvents() : [];
-    for (const s of raw.length ? raw : [e.nativeEvent]) {
-      const x = s.clientX - rect.left;
-      const y = s.clientY - rect.top;
-      const pressure = s.pressure || 0.5;
-      line.points.push([x, y, pressure]);
-      touch.current?.move(x, y, pressure, s.timeStamp);
-    }
-    schedule();
-  };
-
-  const up = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (pointer.current !== e.pointerId) return;
-    pointer.current = null;
-    const line = live.current;
-    if (!line) return;
-    live.current = null;
-    touch.current?.up();
-    lines.current.push(line);
-    const ctx = base.current?.getContext('2d');
-    if (ctx) paint(ctx, line);
-    schedule();
-  };
-
-  return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      className="wall pencil experiment-wall absolute inset-0 size-full"
-      onPointerDown={down}
-      onPointerMove={move}
-      onPointerUp={up}
-      onPointerCancel={up}
-      onLostPointerCapture={up}
-    />
-  );
-}
 
 /** The painted action and what to know before pressing it. */
 function Start({
@@ -244,9 +85,7 @@ const FROST = [1, 2, 4, 8, 16];
  * under them goes soft, softer toward the edge: a progressive blur, each layer
  * masked to its own band, with the paper fading in over it (`.frost`).
  */
-function Header({ touchDrawing, onToggleDrawing, theme, onThemeChange }: {
-  touchDrawing: boolean;
-  onToggleDrawing: () => void;
+function Header({ theme, onThemeChange }: {
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
 }) {
@@ -268,14 +107,6 @@ function Header({ touchDrawing, onToggleDrawing, theme, onThemeChange }: {
       <div className="landing-pass relative mx-auto flex max-w-6xl items-center justify-between px-gutter pt-6 lg:pt-8">
         <SkuzicLogo />
         <nav aria-label="About skuzic" className="flex items-center gap-3 text-[0.9375rem] font-medium sm:gap-6">
-          <button
-            type="button"
-            className="experiment-draw-toggle"
-            aria-pressed={touchDrawing}
-            onClick={onToggleDrawing}
-          >
-            {touchDrawing ? 'Done drawing' : 'Draw on page'}
-          </button>
           <GitHubStar />
           <ThemeSwitcher value={theme} onChange={onThemeChange} />
         </nav>
@@ -284,29 +115,18 @@ function Header({ touchDrawing, onToggleDrawing, theme, onThemeChange }: {
   );
 }
 
-function Hero({ onStart, returning, demo, touchDrawing }: {
+function Hero({ onStart, returning, demo }: {
   onStart?: () => void;
   returning: boolean;
   demo: boolean;
-  touchDrawing: boolean;
 }) {
-  const sketch = useRef<HTMLCanvasElement>(null);
-
   return (
     <main className="experiment-main" aria-labelledby="experiment-title">
       <div className="experiment-playground">
-        <div className="experiment-paper" aria-describedby="experiment-hint">
+        <div className="experiment-paper">
           <figure className="experiment-sketch">
-            <HandSketch canvasRef={sketch} seen />
+            <HandSketch />
           </figure>
-        </div>
-        <div className="experiment-tools">
-          <p id="experiment-hint" className="experiment-hint">
-            <span className="experiment-mouse-hint">Scribble anywhere. Hear it play.</span>
-            <span className="experiment-touch-hint">
-              {touchDrawing ? 'Scribble anywhere. Hear it play.' : 'Tap “Draw on page” to make a little music.'}
-            </span>
-          </p>
         </div>
       </div>
 
@@ -346,9 +166,6 @@ interface Mark {
   color: string;
   /** [x, y, pressure] in a 420 by 330 box, in the order the hand draws them. */
   points: number[][];
-  /** When the pen gets to this mark, and how long it spends on it, in ms. */
-  at: number;
-  ms: number;
   /** How far the nib takes to press in and lift off. Any taper ends in a point, so short dashes keep round ends. */
   taper: [start: number, end: number];
 }
@@ -398,37 +215,26 @@ const SEA: Mark[] = (() => {
     marks.push([color, humps]);
   }
 
-  // A slow, steady hand, with a breath between marks.
-  let at = 0;
   return marks.map(([color, anchors]) => {
     const line = through(anchors);
     const phase = rand() * 6;
     let length = 0;
     for (let i = 1; i < line.length; i++) length += Math.hypot(line[i][0] - line[i - 1][0], line[i][1] - line[i - 1][1]);
-    const mark = {
+    return {
       color,
       points: line.map(([x, y], i) => [x + j(0.4), y + j(0.4), 0.5 + 0.14 * Math.sin(i / 5 + phase)]),
-      at,
-      ms: 100 + length * 3.2,
       taper: (length < 40 ? [0, 0] : [8, 14]) as [number, number],
     };
-    at += mark.ms + 120 + j(50);
-    return mark;
   });
 })();
-const SEA_MS = SEA[SEA.length - 1].at + SEA[SEA.length - 1].ms;
 
-/**
- * The sun over the sea in the studio's own pencil, drawn slowly, mark by mark,
- * the first time it's in view; with reduced motion it's simply there.
- */
-function HandSketch({ canvasRef, seen }: { canvasRef: React.RefObject<HTMLCanvasElement | null>; seen: boolean }) {
+/** The sun over the sea in the studio's own pencil. */
+function HandSketch() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
-    let t = matchMedia('(prefers-reduced-motion: reduce)').matches ? SEA_MS : 0;
-    let frame = 0;
     const paint = () => {
       const width = canvas.clientWidth;
       const d = window.devicePixelRatio || 1;
@@ -438,13 +244,11 @@ function HandSketch({ canvasRef, seen }: { canvasRef: React.RefObject<HTMLCanvas
       ctx.clearRect(0, 0, w, h);
       ctx.setTransform((width / 420) * d, 0, 0, (width / 420) * d, 0, 0);
       ctx.globalAlpha = INK_ALPHA;
-      for (const { color, points, at, ms, taper } of SEA) {
-        const n = Math.ceil(points.length * Math.min(1, (t - at) / ms));
-        if (n < 2) continue;
+      for (const { color, points, taper } of SEA) {
         ctx.fillStyle = color;
         ctx.fill(
           outlinePath(
-            getStroke(points.slice(0, n), {
+            getStroke(points, {
               ...PENCIL,
               size: 5,
               simulatePressure: false,
@@ -455,24 +259,11 @@ function HandSketch({ canvasRef, seen }: { canvasRef: React.RefObject<HTMLCanvas
         );
       }
     };
-    if (seen && t < SEA_MS) {
-      let last = performance.now();
-      const tick = (now: number) => {
-        t += now - last;
-        last = now;
-        paint();
-        if (t < SEA_MS) frame = requestAnimationFrame(tick);
-      };
-      frame = requestAnimationFrame(tick);
-    }
     paint();
     const observer = new ResizeObserver(paint);
     observer.observe(canvas);
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-    };
-  }, [canvasRef, seen]);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <canvas
@@ -515,27 +306,15 @@ export function Landing({
 }) {
   // The studio's paper tooth, made once and used as a mask by everything drawn here.
   const [grain] = useState(() => `url(${makeGrainTile().toDataURL()})`);
-  const [touchDrawing, setTouchDrawing] = useState(false);
+
   return (
     <div
       className="landing experiment fixed inset-0 z-50 overflow-y-auto"
-      data-touch-drawing={touchDrawing}
       style={{ '--grain': grain } as React.CSSProperties}
     >
       <div className="experiment-sheet">
-        <Wall />
-        <Header
-          touchDrawing={touchDrawing}
-          onToggleDrawing={() => setTouchDrawing((value) => !value)}
-          theme={theme}
-          onThemeChange={onThemeChange}
-        />
-        <Hero
-          onStart={onStart}
-          returning={returning}
-          demo={demo}
-          touchDrawing={touchDrawing}
-        />
+        <Header theme={theme} onThemeChange={onThemeChange} />
+        <Hero onStart={onStart} returning={returning} demo={demo} />
         <Footer />
       </div>
     </div>

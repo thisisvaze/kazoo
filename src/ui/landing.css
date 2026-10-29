@@ -203,30 +203,10 @@
   min-height: 100%;
 }
 
-/* Ink sits behind the content, but blank space and words pass the pen through. */
-.experiment-header,
-.experiment-main,
-.experiment-footer {
-  pointer-events: none;
-}
-
-.experiment :is(a, button) {
-  pointer-events: auto;
-}
-
 .experiment-main,
 .experiment-footer {
   position: relative;
   z-index: 1;
-}
-
-.experiment :is(h1, p) {
-  text-shadow: 0 0 4px var(--color-paper), 0 0 10px var(--color-paper);
-}
-
-.experiment-draw-toggle,
-.experiment-touch-hint {
-  display: none;
 }
 
 .experiment-main {
@@ -264,22 +244,6 @@
 
 .experiment-sketch canvas {
   max-height: 100%;
-}
-
-.experiment-tools {
-  display: flex;
-  flex-wrap: wrap;
-  min-height: 2.75rem;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-experiment-small);
-  margin-top: var(--space-experiment-small);
-  color: var(--color-ink-soft);
-  font-size: var(--text-experiment-small);
-}
-
-.experiment-hint {
-  user-select: none;
 }
 
 .experiment-invitation {
@@ -357,7 +321,7 @@
   }
 }
 
-/* Touch begins in scroll mode. A visible switch makes drawing an explicit gesture. */
+/* Touch: bigger targets, and the nav wraps rather than squeezes. */
 @media (hover: none), (pointer: coarse) {
   .theme-switcher button {
     width: 2.5rem;
@@ -369,38 +333,6 @@
     justify-content: flex-end;
     gap: 0.25rem 0.5rem;
     font-size: 0.8125rem;
-  }
-
-  .experiment:not([data-touch-drawing='true']) .experiment-wall {
-    pointer-events: none;
-  }
-
-  .experiment[data-touch-drawing='true'] {
-    overflow-y: hidden;
-  }
-
-  .experiment-draw-toggle {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.75rem;
-    padding-inline: 0.75rem;
-    border-radius: 0.75rem;
-    background: var(--color-paper);
-    box-shadow: inset 0 0 0 1px var(--color-experiment-rule);
-    white-space: nowrap;
-  }
-
-  .experiment-draw-toggle[aria-pressed='true'] {
-    color: var(--color-watercolor-blue);
-    box-shadow: inset 0 0 0 1px currentColor;
-  }
-
-  .experiment-mouse-hint {
-    display: none;
-  }
-
-  .experiment-touch-hint {
-    display: inline;
   }
 }
 
@@ -422,12 +354,6 @@
   .experiment-header nav > a {
     grid-area: 2 / 1;
     align-self: center;
-    font-size: 0.8125rem;
-  }
-
-  .experiment-draw-toggle {
-    grid-area: 2 / 2;
-    justify-content: center;
     font-size: 0.8125rem;
   }
 
