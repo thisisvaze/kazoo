@@ -31,7 +31,7 @@ The song never stops or restarts; it bends to the page. Three things together ma
 - Played in the browser: the landing is at skuzic.vercel.app and the studio at skuzic.vercel.app/app (one app; vercel.json rewrites /app to it; going back to the landing pauses the music and keeps the drawing, and "Back to your drawing" picks the song up again), on a shared demo key: free, no sign-up. A visitor can connect their own free Gemini key (checked with Google, kept in the browser) when the shared key is slow or busy.
 - Best with headphones. Browsers start audio only after a gesture, so the landing's start action is also what unlocks sound.
 - The first visit downloads SigLIP 2's image model (63 MB, cached after that).
-- A blank page offers vibes to start from, each with a short preview loop: Lo-fi, Ambient, Solo piano, Indie folk, Bossa nova, Jazz café, String quartet, or Just draw.
+- A blank page offers vibes to start from, each with a short preview loop: Lo-fi, Ambient, Solo piano, Indie folk, Bossa nova, Jazz café or String quartet. Ambient is the default, so a visitor who just draws hears ambient.
 - For people who want to steer: the Mixer (every sound is a fader you can rewrite in plain words), Reimagine (Gemini rewrites the arrangement from the drawing), and typed requests such as "add a saxophone".
 - Wiping the page winds the music down to silence; the next mark brings it back.
 

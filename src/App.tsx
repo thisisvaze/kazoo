@@ -1245,7 +1245,6 @@ export default function App() {
     const calm = inkConfig(feelOf(opening), { coverage: 0, warmth: 0 });
     if (canvasRef.current?.isEmpty() ?? true) {
       fadeOut();
-      if (next === DEFAULT_VIBE) return;
       if (!previewRef.current) {
         previewRef.current = new VibePreview(setPreviewing);
         previewRef.current.setVolume(VOLUME);

@@ -16,7 +16,8 @@ private struct PaletteTests {
                                    vectors: Data(contentsOf: root.appendingPathComponent("palette-vectors.json")))
         let palette = book.palette
         let rainVector = book.vectors.moods["rainy"]!.vector
-        let blank = book.defaultVibe
+        // Lo-fi offers every instrument, so the drawing alone chooses.
+        let lofi = book.vibe("lofi")
         func mood(_ id: String) -> Palette.Mood { palette.moods.first { $0.id == id }! }
 
         check(Set(palette.moods.map(\.prompt)).count == palette.moods.count,
@@ -43,31 +44,31 @@ private struct PaletteTests {
         let scenery = [figure("m", 600, [("mountains", 0.95), ("volcano", 0.05)]),
                        figure("s", 150, [("sunny", 1)]),
                        figure("t", 300, [("trees", 0.9), ("xmas", 0.1)])]
-        let landscape = book.nextMix(book.readScene(scenery, vibe: blank), playing: nil, vibe: blank)!
+        let landscape = book.nextMix(book.readScene(scenery, vibe: lofi), playing: nil, vibe: lofi)!
         check(PaletteBook.title(landscape) == "mountains, trees and sunshine",
               "a landscape plays its things together, the biggest first")
-        let biked = book.nextMix(book.readScene(scenery + [figure("b", 250, [("bicycle", 0.97), ("car", 0.03)])], vibe: blank),
-                                 playing: landscape, vibe: blank)
+        let biked = book.nextMix(book.readScene(scenery + [figure("b", 250, [("bicycle", 0.97), ("car", 0.03)])], vibe: lofi),
+                                 playing: landscape, vibe: lofi)
         check(biked?.moods.first?.item.id == "mountains" && biked?.moods.contains { $0.item.id == "bicycle" } == true,
               "a bike drawn into a finished landscape joins the music without taking it over")
-        check(book.nextMix(book.readScene(scenery, vibe: blank), playing: landscape, vibe: blank) == nil,
+        check(book.nextMix(book.readScene(scenery, vibe: lofi), playing: landscape, vibe: lofi) == nil,
               "the same reading twice changes nothing")
         let unsure = [figure("x", 300, [("energy", 0.3), ("water", 0.25), ("spiral", 0.25), ("snake", 0.2)])]
-        check(book.nextMix(book.readScene(unsure, vibe: blank), playing: nil, vibe: blank).map(book.isIntro) == true,
+        check(book.nextMix(book.readScene(unsure, vibe: lofi), playing: nil, vibe: lofi).map(book.isIntro) == true,
               "an unsure first reading starts the intro")
-        check(book.nextMix(book.readScene(unsure, vibe: blank), playing: book.introMix(blank), vibe: blank) == nil,
+        check(book.nextMix(book.readScene(unsure, vibe: lofi), playing: book.introMix(lofi), vibe: lofi) == nil,
               "the intro waits for something SigLIP is sure of")
         let opening = [figure("a", 300, [("energy", 0.9), ("water", 0.1)], strokes: 1)]
-        check(book.nextMix(book.readScene(opening, vibe: blank), playing: nil, vibe: blank).map(book.isIntro) == true
-              && book.nextMix(book.readScene(opening, vibe: blank), playing: book.introMix(blank), vibe: blank) == nil,
+        check(book.nextMix(book.readScene(opening, vibe: lofi), playing: nil, vibe: lofi).map(book.isIntro) == true
+              && book.nextMix(book.readScene(opening, vibe: lofi), playing: book.introMix(lofi), vibe: lofi) == nil,
               "a first stroke that reads only as squiggles keeps the intro")
-        check(book.nextMix(book.readScene([figure("s", 300, [("sunny", 0.9), ("energy", 0.1)], strokes: 1)], vibe: blank),
-                           playing: nil, vibe: blank).map(PaletteBook.title) == "sunshine",
+        check(book.nextMix(book.readScene([figure("s", 300, [("sunny", 0.9), ("energy", 0.1)], strokes: 1)], vibe: lofi),
+                           playing: nil, vibe: lofi).map(PaletteBook.title) == "sunshine",
               "a figure that reads clearly as a thing counts from its first stroke")
         let marked = book.nextMix(book.readScene([figure("m", 300, [("mountains", 0.9), ("energy", 0.1)]),
                                                   figure("q", 400, [("energy", 0.95), ("water", 0.05)], strokes: 1),
-                                                  figure("n", 300, [("energy", 0.8), ("snake", 0.2)], strokes: 1)], vibe: blank),
-                                  playing: nil, vibe: blank)
+                                                  figure("n", 300, [("energy", 0.8), ("snake", 0.2)], strokes: 1)], vibe: lofi),
+                                  playing: nil, vibe: lofi)
         check(marked.map(PaletteBook.title) == "mountains and squiggles", "a finished scribble adds colour but the things lead")
 
         let i1 = palette.instruments[0], i2 = palette.instruments[1], i3 = palette.instruments[2]
@@ -81,19 +82,19 @@ private struct PaletteTests {
               "a narrow challenger changes nothing")
 
         func layers(_ mix: Mix) -> [(label: String, prompt: String, volume: Double)] {
-            book.mixActions(mix, config: ConfigPatch(density: 0.4, brightness: 0.4), vibe: blank).compactMap { action in
+            book.mixActions(mix, config: ConfigPatch(density: 0.4, brightness: 0.4), vibe: lofi).compactMap { action in
                 if case let .addTrack(label, prompt, volume, _) = action { return (label, prompt, volume) }
                 return nil
             }
         }
-        let actions = book.mixActions(landscape, config: ConfigPatch(density: 0.4, brightness: 0.4), vibe: blank)
+        let actions = book.mixActions(landscape, config: ConfigPatch(density: 0.4, brightness: 0.4), vibe: lofi)
         check(actions.first == .clearTracks && layers(landscape).count <= 6 && layers(landscape).allSatisfy { $0.volume >= 0.15 },
               "a mix is style, up to three things and up to two instruments, never below 0.15")
         check(layers(landscape)[1...3].map { "\($0.label) \($0.volume)" } == ["mountains 0.26", "trees 0.15", "sunshine 0.15"],
               "each thing is its own layer, named for it, the biggest loudest")
         let rain = [figure("r", 400, [("rainy", 1)])]
-        let first = book.nextMix(book.readScene(rain, vibe: blank), playing: nil, vibe: blank)!
-        check(layers(first)[0].prompt == blank.ground["lyria"] && layers(first)[1].volume == palette.moodWeight["lyria"],
+        let first = book.nextMix(book.readScene(rain, vibe: lofi), playing: nil, vibe: lofi)!
+        check(layers(first)[0].prompt == lofi.ground["lyria"] && layers(first)[1].volume == palette.moodWeight["lyria"],
               "the iPad plays Lyria's measured balance")
 
         let jazz = book.vibe("jazz"), piano = book.vibe("piano")
@@ -109,7 +110,7 @@ private struct PaletteTests {
             v.ground["lyria"] != nil && (v.start + v.instruments).allSatisfy { book.instrument($0) != nil }
                 && v.start.allSatisfy(v.instruments.contains)
         }, "every vibe names real instruments and a style for each engine")
-        check(book.vibe("no-such-vibe") == blank && blank.id == "blank", "an unknown vibe falls back to just drawing")
+        check(book.vibe("no-such-vibe") == book.defaultVibe && book.defaultVibe.id == "ambient", "an unknown vibe falls back to ambient")
 
         let full = Ink(coverage: 0.25, warmth: 0).config(density: 0.4, brightness: 0.5)
         let sparse = Ink(coverage: 0.02, warmth: 0).config(density: 0.4, brightness: 0.5)

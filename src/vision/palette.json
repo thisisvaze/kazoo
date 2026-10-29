@@ -1,6 +1,5 @@
 {
   "vibes": [
-    {"id": "blank", "name": "Just draw", "blurb": "Silence until your first mark. Your drawing picks the sound.", "ground": {"lyria": "dreamy lo-fi hip hop", "magenta": "lo-fi hip hop"}, "start": ["rhodes"], "instruments": ["rhodes", "piano", "guitar", "kalimba", "pads", "glockenspiel", "strings", "harp", "flute", "vibes"], "bpm": 90, "drums": true},
     {"id": "lofi", "name": "Lo-fi", "blurb": "Dusty beats and warm Rhodes, right away.", "ground": {"lyria": "dreamy lo-fi hip hop", "magenta": "lo-fi hip hop"}, "start": ["rhodes"], "instruments": ["rhodes", "piano", "guitar", "kalimba", "pads", "glockenspiel", "strings", "harp", "flute", "vibes"], "bpm": 90, "drums": true},
     {"id": "ambient", "name": "Ambient", "blurb": "Slow and floating, no beat.", "ground": {"lyria": "ambient soundscape", "magenta": "ambient"}, "start": ["pads"], "instruments": ["pads", "glockenspiel", "piano", "harp", "strings", "flute"], "bpm": 70, "drums": false},
     {"id": "piano", "name": "Solo piano", "blurb": "Just a felt piano and you.", "ground": {"lyria": "solo felt piano", "magenta": "solo piano"}, "start": [], "instruments": [], "bpm": 72, "drums": false},

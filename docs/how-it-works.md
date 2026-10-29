@@ -121,8 +121,8 @@ piano supplies its instrument through the genre cue on the drawing's mood.
 On a blank page, tapping a vibe plays a short loop of it at once
 (`public/sounds/vibes/`, rendered by `scripts/make-vibe-previews.py`) and lays
 its channels out in the mixer. The band itself starts on the first mark, in the
-vibe's tempo, and the loop bows out as soon as the band is audible. "Just draw"
-fades back to silence. With a drawing already on the page, picking a vibe
+vibe's tempo, and the loop bows out as soon as the band is audible. Without a
+pick, the page starts in Ambient (`DEFAULT_VIBE`). With a drawing already on the page, picking a vibe
 switches the band straight away. Wiping the page fades the band out over three
 seconds rather than cutting it, and the next mark brings it back.
 

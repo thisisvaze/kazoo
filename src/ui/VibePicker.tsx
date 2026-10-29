@@ -8,17 +8,6 @@ import type { Vibe } from '../vision/eyes';
  * hand as the pen. Plain SVG, so it's crisp at any size and themes nothing.
  */
 const ART: Record<string, { from: string; to: string; draw: ReactNode }> = {
-  blank: {
-    from: '#fbfaf6',
-    to: '#ebe8df',
-    draw: (
-      <path
-        d="M22 40c6-14 12-14 18 0s12 14 18 0 12-14 18 0 12 14 18 0"
-        stroke="#3a3934"
-        strokeWidth="3.2"
-      />
-    ),
-  },
   lofi: {
     from: '#fae6cc',
     to: '#efcdab',
@@ -161,8 +150,12 @@ const ART: Record<string, { from: string; to: string; draw: ReactNode }> = {
   },
 };
 
-/** For a vibe someone adds to palette.json before drawing it a picture. */
-const FALLBACK = ART.blank;
+/** For a vibe someone adds to palette.json before drawing it a picture: a plain squiggle. */
+const FALLBACK = {
+  from: '#fbfaf6',
+  to: '#ebe8df',
+  draw: <path d="M22 40c6-14 12-14 18 0s12 14 18 0 12-14 18 0 12 14 18 0" stroke="#3a3934" strokeWidth="3.2" />,
+};
 
 function Card({ vibe, on, onPick }: { vibe: Vibe; on: boolean; onPick: (vibe: Vibe) => void }) {
   const art = ART[vibe.id] ?? FALLBACK;

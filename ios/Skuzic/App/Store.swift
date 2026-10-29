@@ -27,7 +27,7 @@ final class SkuzicStore: ObservableObject {
     static let volume: Float = 0.8
 
     /// The vibe a session starts from. Persisted, like the web build's.
-    @Published private(set) var vibeID = Preferences.string(.vibe) ?? "blank"
+    @Published private(set) var vibeID = Preferences.string(.vibe) ?? "ambient"
     /// The vibe whose preview loop is playing, if any.
     @Published private(set) var previewing: String?
     /// The drawing reader loaded; until then (or on a device that can't run it)
@@ -316,7 +316,6 @@ final class SkuzicStore: ObservableObject {
         let calmPatch = ConfigPatch(density: calm.density, brightness: calm.brightness)
         if blank {
             fadeOut()
-            if next == book.defaultVibe { return }
             if preview == nil { preview = VibePreview { [weak self] in self?.previewing = $0 } }
             preview?.play(next.id, volume: Self.volume)
             dispatch(book.mixActions(opening, config: calmPatch, vibe: next))

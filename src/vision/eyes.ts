@@ -98,8 +98,8 @@ export interface Mix {
 const instrument = (id: string) => palette.instruments.find((i) => i.id === id)!;
 
 export const VIBES: Vibe[] = palette.vibes;
-/** "Just draw": silence until the first mark, then the drawing picks the sound. */
-export const DEFAULT_VIBE = VIBES[0];
+/** Ambient: where a first visit starts, and where an unknown vibe falls back to. */
+export const DEFAULT_VIBE = VIBES.find((v) => v.id === 'ambient')!;
 export const vibeById = (id: string) => VIBES.find((v) => v.id === id) ?? DEFAULT_VIBE;
 
 /**

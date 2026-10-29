@@ -29,7 +29,7 @@ you draw a house
 On a blank page you can start from a vibe: lo-fi, ambient, solo piano, indie
 folk, bossa nova, a jazz café or a string quartet. Tap one to hear a short
 preview; your first stroke starts the band in it, and your drawing then moves
-the mood inside it. Or just draw, and let the page pick. Wipe the page and the
+the mood inside it. Or just draw: it starts in ambient. Wipe the page and the
 band winds down to silence.
 
 Want to steer it yourself? Open the **Mixer**. Every sound is a fader you can

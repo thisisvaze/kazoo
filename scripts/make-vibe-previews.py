@@ -90,7 +90,7 @@ async def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     wanted = set(sys.argv[1:])
     for vibe in palette["vibes"]:
-        if vibe["id"] == "blank" or (wanted and vibe["id"] not in wanted):
+        if wanted and vibe["id"] not in wanted:
             continue
         length = loop_seconds(vibe["bpm"])
         x = await render(client, vibe, WARMUP + length + TAIL + 0.5)

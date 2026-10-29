@@ -166,8 +166,8 @@ struct PaletteBook {
 
     /// The intro mood has no tags and never competes in a reading.
     var introMood: Palette.Mood { palette.moods[0] }
-    /// "Just draw": silence until the first mark, then the drawing picks the sound.
-    var defaultVibe: Palette.Vibe { palette.vibes[0] }
+    /// Ambient: where a first visit starts, and where an unknown vibe falls back to.
+    var defaultVibe: Palette.Vibe { palette.vibes.first { $0.id == "ambient" } ?? palette.vibes[0] }
     private var readableMoods: [Palette.Mood] { palette.moods.filter { !$0.tags.isEmpty } }
 
     func vibe(_ id: String) -> Palette.Vibe {
