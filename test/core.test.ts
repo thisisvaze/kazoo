@@ -1,5 +1,6 @@
 import { Scale } from '@google/genai';
-import { checkGeminiKey, toApiConfig } from '../src/audio/lyria';
+import { LyriaEngine, checkGeminiKey, toApiConfig } from '../src/audio/lyria';
+import { breathConfig, breathTracks, nextForm, type Form } from '../src/core/form';
 import { attend, frictionLevel, leadOf, slantOf } from '../src/audio/touch';
 import {
   DEFAULT_VIBE,
@@ -15,7 +16,7 @@ import {
   vibeById,
 } from '../src/vision/eyes';
 import { inkConfig, swellAfter, withSwell } from '../src/vision/ink';
-import { describeState, keepRefinement, normalizePlan } from '../src/llm/planner';
+import { describeState, keepRefinement, normalizePlan, sameIdea } from '../src/llm/planner';
 import { musicPrompts } from '../src/core/music-prompts';
 import vectors from '../src/vision/palette-vectors.json';
 import palette from '../src/vision/palette.json';
@@ -470,6 +471,23 @@ check(
   JSON.stringify([...kept.words]) === JSON.stringify([['water', 'dusky, swirling and dreamlike'], ['felt piano', 'felt piano, slow and rubato']]),
   [...kept.words],
 );
+check(
+  'a refine skips a rewording of the same idea, since each rewrite is a crossfade',
+  keepRefinement(
+    [
+      { type: 'MODIFY_TRACK', target: 'w', prompt: 'Flowing, serene' },
+      { type: 'MODIFY_TRACK', target: 'p', prompt: 'soft felt piano, gentle melody' },
+    ],
+    live,
+    { density: 0.4, brightness: 0.6 },
+  ).actions.length === 0,
+);
+check(
+  'one idea: half the words or more in common, filler aside',
+  sameIdea('soft, hazy and golden', 'soft, warm and golden') &&
+    !sameIdea('tranquil, rhythmic and cool', 'hypnotic, steady and rhythmic') &&
+    !sameIdea('harp, quick falling runs', 'harp, slow glistening arpeggios'),
+);
 check('a refine never touches the style, adds, removes or clears', kept.actions.every((a) => a.type === 'MODIFY_TRACK' ? a.target !== 's' : a.type === 'SET_CONFIG'));
 check(
   'a refine moves only the two live knobs, inside their gentle range',
@@ -527,6 +545,129 @@ check('browser copy, print, bookmark and tab commands stay untouched',
 check('typing composition, Alt shortcuts and handled events are ignored',
   shortcut('p', { isComposing: true }) === null && shortcut('p', { altKey: true }) === null && shortcut('e', { defaultPrevented: true }) === null);
 check('unassigned shifted chords do not switch tools', shortcut('P', { shiftKey: true }) === null);
+
+console.log('\nform: the music takes a breath while the pen rests');
+{
+  const bar = 1000;
+  const full: Form = { breath: false, since: 0 };
+  check('a phrase of full music first, however long the pen rests', !nextForm(full, 15_000, 0, bar).breath);
+  check('no breath while the pen keeps drawing', !nextForm(full, 40_000, 40_000, bar).breath);
+  check('no breath for a pause to think', !nextForm(full, 40_000, 38_000, bar).breath);
+  const breathing = nextForm(full, 40_000, 35_000, bar);
+  check('a breath once the pen has rested after a phrase', breathing.breath && breathing.since === 40_000);
+  check('a breath lasts its bars when the pen stays away', nextForm(breathing, 47_000, 35_000, bar).breath && !nextForm(breathing, 48_000, 35_000, bar).breath);
+  check('the pen brings the music back, but not before a breath is heard', nextForm(breathing, 43_000, 42_000, bar).breath && !nextForm(breathing, 44_000, 42_000, bar).breath);
+
+  const config: MixConfig = { ...INITIAL_STATE.config, density: 0.5, muteDrums: false };
+  const breathed = breathConfig(config, {});
+  check('a breath drops the drums and thins the music', breathed.muteDrums && breathed.density === 0.25 && breathed.bpm === config.bpm);
+  const locked = breathConfig(config, { muteDrums: true, density: true });
+  check('a breath leaves knobs the artist locked', !locked.muteDrums && locked.density === 0.5);
+
+  const track = (id: string, label: string, volume: number, muted = false) => ({ id, label, prompt: label, volume, muted, origin: 'eyes' });
+  const traded = breathTracks([track('m', 'sunshine', 0.45), track('a', 'felt piano', 0.6), track('b', 'harp', 0.4)]);
+  check('a breath brings the second instrument to the front', traded[0].volume === 0.45 && traded[1].volume === 0.4 && traded[2].volume === 0.6);
+  const solo = [track('m', 'sunshine', 0.45), track('a', 'felt piano', 0.6), track('b', 'harp', 0.4, true)];
+  check('a lone instrument keeps the lead', breathTracks(solo) === solo);
+}
+
+console.log('\nLyria hands off to a fresh session before the cap');
+{
+  const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
+  type Callbacks = { onmessage: (m: unknown) => void; onclose: (e: { reason: string }) => void; onerror: (e: unknown) => void };
+  class FakeSession {
+    sent: string[] = [];
+    playing = false;
+    closed = false;
+    constructor(private callbacks: Callbacks) {}
+    setMusicGenerationConfig = async () => void this.sent.push('config');
+    setWeightedPrompts = async () => void this.sent.push('prompts');
+    play = () => void (this.playing = true);
+    pause = () => void (this.playing = false);
+    stop = () => {};
+    resetContext = () => {};
+    close = () => {
+      if (this.closed) return;
+      this.closed = true;
+      this.callbacks.onclose({ reason: '' });
+    };
+    setup = () => this.callbacks.onmessage({ setupComplete: {} });
+    chunk = () => this.callbacks.onmessage({ serverContent: { audioChunks: [{ data: 'AAAA' }] } });
+  }
+
+  async function playingEngine() {
+    const sessions: FakeSession[] = [];
+    const heard: boolean[] = [];
+    let swapNext = false;
+    const engine = new LyriaEngine('a key of my own');
+    const fake = engine as unknown as Record<string, unknown> & { open(): Promise<void>; handOff(): Promise<void> };
+    fake.ai = { live: { music: { connect: async ({ callbacks }: { callbacks: Callbacks }) => sessions[sessions.push(new FakeSession(callbacks)) - 1] } } };
+    fake.scheduler = {
+      enqueue: (_data: string, _mime: string, swap: boolean) => {
+        heard.push(swap || swapNext);
+        swapNext = false;
+      },
+      reset: (onReset: () => void) => {
+        onReset();
+        swapNext = true;
+      },
+      bufferedSeconds: 0,
+      resume: () => {},
+      unmute: () => {},
+      mute: () => {},
+      flush: () => {},
+      close: async () => {},
+    };
+    fake.lastPrompts = [{ text: 'felt piano', weight: 1 }];
+    const opening = fake.open();
+    await tick();
+    sessions[0].setup();
+    await opening;
+    await engine.setConfig(INITIAL_STATE.config);
+    engine.play();
+    const handOff = async () => {
+      const going = fake.handOff();
+      await tick();
+      sessions.at(-1)!.setup();
+      await going;
+    };
+    return { engine, sessions, heard, handOff };
+  }
+
+  {
+    const { engine, sessions, heard, handOff } = await playingEngine();
+    const [first] = sessions;
+    await handOff();
+    const next = sessions[1];
+    check('the next session starts on the same mix, and plays', next.sent.includes('config') && next.sent.includes('prompts') && next.playing);
+    next.chunk();
+    first.chunk();
+    check("the next session's warm-up isn't heard; the playing one carries on", heard.length === 1 && !first.closed);
+    next.chunk();
+    check('once warm, it takes over and the old one hangs up', first.closed && engine.getStatus() === 'playing' && sessions.length === 2);
+    first.chunk();
+    next.chunk();
+    check('it dips in on its next chunk, and the old one is heard no more', heard.length === 2 && heard[1] === true);
+    await engine.close();
+  }
+
+  {
+    const { engine, sessions, heard, handOff } = await playingEngine();
+    await handOff();
+    sessions[0].close();
+    sessions[1].chunk();
+    check('a session closing at its cap mid-warm-up hands straight over', sessions.length === 2 && heard.length === 1 && heard[0] === true);
+    await engine.close();
+  }
+
+  {
+    const { engine, sessions, handOff } = await playingEngine();
+    await handOff();
+    engine.resetContext();
+    check('a reset gives up a successor still on the old tempo', sessions[1].closed && !sessions[0].closed && engine.getStatus() === 'playing');
+    await engine.close();
+  }
+}
 
 console.log(failures ? `\n${failures} failure(s)` : '\nall passed');
 process.exit(failures ? 1 : 0);

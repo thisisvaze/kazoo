@@ -191,5 +191,43 @@ console.log('coalescing delivery — a slow backend must still get the final wei
   mixer.reset();
 }
 
+console.log('PromptMixer — every change takes the whole ramp, and a repeat mid-ramp does not restart it');
+
+{
+  const frames: PromptWeight[][] = [];
+  const mixer = new PromptMixer((p) => frames.push(p.map((x) => ({ ...x }))));
+  mixer.rampMs = 600;
+
+  mixer.setTarget([{ text: 'mood', weight: 0.15 }]);
+  await sleep(300);
+  // The app re-sends an unchanged mix whenever any track changes.
+  mixer.setTarget([{ text: 'mood', weight: 0.15 }]);
+  await sleep(150);
+  const mid = seriesFor(frames, 'mood').at(-1)!;
+  check('a small change still takes the whole ramp', mid < 0.14, mid);
+
+  await sleep(300);
+  const end = seriesFor(frames, 'mood').at(-1)!;
+  check('a repeat mid-ramp does not push the end back', Math.abs(end - 0.15) < 1e-6, end);
+  mixer.reset();
+}
+
+console.log('PromptMixer — settle lands a long ramp at once, for a reset');
+
+{
+  const frames: PromptWeight[][] = [];
+  const mixer = new PromptMixer((p) => frames.push(p.map((x) => ({ ...x }))));
+  mixer.rampMs = 10_000;
+
+  mixer.setTarget([{ text: 'old', weight: 0.6 }]);
+  await sleep(150);
+  mixer.setTarget([{ text: 'new', weight: 0.6 }]);
+  mixer.settle();
+  await sleep(150);
+  const last = frames.at(-1)!;
+  check('lands on the new mix alone', last.length === 1 && last[0].text === 'new' && last[0].weight === 0.6, last);
+  mixer.reset();
+}
+
 console.log(failures ? `\n${failures} failure(s)` : '\nall passed');
 process.exit(failures ? 1 : 0);

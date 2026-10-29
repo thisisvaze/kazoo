@@ -84,12 +84,15 @@ ratchet. A Gemini arrangement survives until the drawing reads as something new.
 
 Gemini follows along (Settings, on by default). SigLIP names things but in stock
 words: it can't see colour, line or story, so violet water and blue water got
-the same "flowing and serene". Every 3.5 seconds at most, and only while the page
-keeps changing, the selected Gemini model looks at the page and rewrites the
-words of every layer for this drawing within the selected vibe, with density and brightness
+the same "flowing and serene". Once every four bars at most (about 11 seconds
+at 90 bpm), and only while the page keeps changing, the selected Gemini model
+looks at the page and rewrites the words of every layer for this drawing within
+the selected vibe, with density and brightness
 (`refine` in `src/llm/planner.ts`, its own short instruction and a reply shape
 that requires a line per layer: under the arranger's instruction Gemini only
-ever moved the knobs). It can't add, remove or clear layers, change the selected vibe,
+ever moved the knobs). A rewrite sharing half its words with the current one is
+dropped (`sameIdea`): each rewrite is a crossfade, and a pass every few seconds
+kept the music mid-change for as long as the pen moved. It can't add, remove or clear layers, change the selected vibe,
 or change tempo or key (`keepRefinement`), so SigLIP keeps deciding what is on
 the page. Its words and knob settings carry over when SigLIP adds or drops a
 thing, and the ink stops nudging knobs Gemini has set. Measured on calm blue
@@ -347,9 +350,34 @@ JSONL (`src/lib/dataset.ts`): ready-made (input → chosen) pairs for SFT, or
 ## The details that make it feel like an instrument
 
 **Weights ramp, they don't snap.** Replacing the prompt set outright produces an
-audible jump cut. `LyriaEngine` keeps a `current` and a `target` weight map and
-walks between them over ~1s at 10Hz (`src/audio/lyria.ts`). That interpolation
-*is* the DJ-blend feel.
+audible jump cut. `PromptMixer` keeps a `current` and a `target` weight map and
+walks between them at 10Hz (`src/audio/mixer.ts`). On Lyria every change takes
+two bars (5.3 s at 90 bpm), however far its weights move: Lyria makes music in
+2 s chunks, so the old one-second ramp reached it as a jump. A reset lands the
+ramp at once, since the music starts over. That interpolation *is* the DJ-blend
+feel.
+
+**The level is held steady.** Raw Lyria wanders about 4 dB between vibes and
+between sessions of one vibe. A gentle compressor after the hand's lead halves
+that and keeps peaks near -4 dBFS at full volume (`LEVELER` in
+`src/audio/scheduler.ts`, measured on raw captures).
+
+**The music has sections.** Lyria remembers about ten seconds, so left alone it
+never builds or changes. After 16 bars of full music, once the pen has rested
+for 4 bars, the music takes an 8-bar breath: the drums drop out, the energy
+thins, and the second instrument trades weights with the lead. The pen coming
+back ends the breath once it has lasted 4 bars, the way a band comes back in.
+While the pen keeps drawing there is no breath. The breath is applied only on
+the way out to the engine, so the mixer and Gemini see the mix as set, and
+knobs the artist locked stay put (`src/core/form.ts`).
+
+**The song outlives its session.** Google ends a Lyria session after about ten
+minutes, and the hosted relay after five. Before either, the engine opens the
+next session on the same mix while the current one plays on, drops its first
+two chunks while Lyria finds the groove, and then lets what is queued dip into
+it, the same seam as a reset (`handOff` in `src/audio/lyria.ts`). No gap, and
+no cold start. If the old session closes first, the warming one takes over at
+once; with no successor, the engine reopens after a short dip as before.
 
 **A weight of zero is invalid.** The API rejects it. Tracks fade to an epsilon
 and are then dropped from the array entirely. An empty prompt list is also

@@ -15,7 +15,8 @@ import { DEFAULT_BRIDGE_URL, MagentaEngine } from './audio/magenta';
 import { VibePreview } from './audio/preview';
 import { reduce, reduceAll } from './core/reducer';
 import { musicPrompts } from './core/music-prompts';
-import { INITIAL_STATE, type Action, type Backend, type SkuzicState } from './core/types';
+import { breathConfig, breathTracks, nextForm, type Form } from './core/form';
+import { INITIAL_STATE, barMs, type Action, type Backend, type SkuzicState } from './core/types';
 import { addRecord, countRecords, exportDataset, type AbRecord } from './lib/dataset';
 import { KEYS, load, save } from './lib/persist';
 import { relayAvailable, relayPass } from './lib/relay';
@@ -107,11 +108,11 @@ function unanswered(message: string): string {
 }
 
 /**
- * Gemini refines at most this often, in ms, and only while the page changes.
- * A pass takes a second or two and Lyria another three or so to be heard, so
- * faster would only stack refinements nobody hears apart.
+ * Gemini refines at most once a phrase, this many bars, and only while the
+ * page changes. Each rewrite is a crossfade the music settles out of; a pass
+ * every few seconds kept it mid-change for as long as the pen moved.
  */
-const REFINE_EVERY = 3500;
+const REFINE_BARS = 4;
 /** After a failed refine (a rate limit, an outage), wait this long instead. */
 const REFINE_BACKOFF = 20_000;
 
@@ -348,6 +349,14 @@ export default function App() {
   const autoPaused = useRef(false);
   /** Read inside the tracks effect, which must not re-run (and re-steer) on status changes. */
   const statusRef = useRef<EngineStatus>('idle');
+
+  /** The music's sections (core/form.ts): full, or taking a breath while the pen rests. */
+  const formRef = useRef<Form>({ breath: false, since: 0 });
+  const [breath, setBreath] = useState(false);
+  /** When the pen last left the paper, ms. */
+  const penAt = useRef(0);
+  /** The knobs as the engine plays them: in a breath, without the drums and thinner. */
+  const playedConfig = (s: SkuzicState) => (formRef.current.breath ? breathConfig(s.config, s.configLocks) : s.config);
   useEffect(() => {
     statusRef.current = status;
   }, [status]);
@@ -365,7 +374,7 @@ export default function App() {
     const engine = engineRef.current;
     if (!engine) return;
 
-    const prompts = musicPrompts(state, vibe);
+    const prompts = musicPrompts(breath ? { ...state, tracks: breathTracks(state.tracks) } : state, vibe);
 
     // Both backends reject an empty prompt list, so a mix that is all deleted,
     // muted, or zeroed cannot be expressed as prompts. Treat it as silence
@@ -399,7 +408,7 @@ export default function App() {
       hasPlayed.current = true;
       engine.play();
     }
-  }, [state.tracks, state.backend, state.soundEffects, vibe]);
+  }, [state.tracks, state.backend, state.soundEffects, vibe, breath]);
 
   const prevConfig = useRef(state.config);
   const resetTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -421,12 +430,12 @@ export default function App() {
       resetTimer.current = setTimeout(() => {
         resetTimer.current = undefined;
         const live = engineRef.current;
-        void live?.setConfig(stateRef.current.config).then(() => live.resetContext());
+        void live?.setConfig(playedConfig(stateRef.current)).then(() => live.resetContext());
       }, 300);
       return;
     }
-    void engine.setConfig(state.config);
-  }, [state.config]);
+    void engine.setConfig(playedConfig(state));
+  }, [state.config, breath]);
 
   const firstEpoch = useRef(true);
   useEffect(() => {
@@ -1006,6 +1015,23 @@ export default function App() {
     }, 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  // The form: every second, whether the music plays full or takes a breath.
+  // Off while it isn't playing, and for A/B, the lab and sound effects, so a
+  // full section starts with the music.
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      const now = performance.now();
+      const off =
+        statusRef.current !== 'playing' || driveRef.current !== 'off' || pendingAbRef.current || stateRef.current.soundEffects;
+      const form = off
+        ? { breath: false, since: now }
+        : nextForm(formRef.current, now, hand.current.drawing ? now : penAt.current, barMs(stateRef.current.config.bpm));
+      formRef.current = form;
+      setBreath(form.breath);
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, []);
   /** Bumped by every read; a refine remembers which page it looked at. */
   const pageVersion = useRef(0);
   const refinedVersion = useRef(-1);
@@ -1043,7 +1069,7 @@ export default function App() {
     if (version === refinedVersion.current) return;
     const epoch = refineEpoch.current;
     refining.current = true;
-    nextRefineAt.current = performance.now() + REFINE_EVERY;
+    nextRefineAt.current = performance.now() + REFINE_BARS * barMs(stateRef.current.config.bpm);
     try {
       const encodeStart = performance.now();
       const image = canvas.toDataURL();
@@ -1088,7 +1114,7 @@ export default function App() {
   const refineRef = useRef(refine);
   refineRef.current = refine;
 
-  /** At most one refine every REFINE_EVERY, and only for a page it hasn't seen. */
+  /** At most one refine every REFINE_BARS, and only for a page it hasn't seen. */
   function scheduleRefine() {
     if (!followRef.current || refining.current || refineTimer.current !== undefined) return;
     refineTimer.current = window.setTimeout(() => {
@@ -1649,6 +1675,7 @@ export default function App() {
                 if (input.type === 'down' || input.type === 'up') {
                   swellNow();
                   hand.current.drawing = input.type === 'down';
+                  penAt.current = performance.now();
                 }
                 labSink.current?.(input);
               }}

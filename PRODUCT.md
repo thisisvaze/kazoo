@@ -42,7 +42,7 @@ The song never stops or restarts; it bends to the page. Three things together ma
 - The pen's sound runs locally and works before the music connects.
 - iPad and iPhone: a native port exists (`ios/`, on-device SigLIP via Core ML, the same pen sound). It is not distributed yet; a public release is planned but undated. Never present it as available.
 - Lyria RealTime is an experimental Google model, so limits can change, and the shared key can be busy.
-- Hosted relay: Vercel Hobby ends each connection after 5 minutes; skuzic reconnects with a short dip.
+- Hosted relay: Vercel Hobby ends each connection after 5 minutes; skuzic opens the next one beforehand and hands the music over with only a brief dip.
 - Open source under MIT at github.com/thisisvaze/skuzic.
 
 ## Brand Commitments

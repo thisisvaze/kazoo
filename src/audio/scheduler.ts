@@ -43,6 +43,16 @@ const LEAD_RELEASE = 0.9;
 /** Where the lead's top-end tilt starts, in Hz. */
 const LEAD_SHELF_HZ = 3000;
 
+/**
+ * Lyria's level wanders about 4 dB between vibes, and as much between two
+ * sessions of one vibe, and at full volume the lead took its peaks to -0.4
+ * dBFS. Measured on raw captures of five vibes (2026-10-29), this gentle
+ * compressor halves the spread and keeps those peaks near -4 dBFS. It adds
+ * its own makeup gain; LEVEL_TRIM takes that back, so the average level stays.
+ */
+const LEVELER: DynamicsCompressorOptions = { threshold: -18, knee: 6, ratio: 3, attack: 0.005, release: 0.3 };
+const LEVEL_TRIM = 10 ** (-1.4 / 20);
+
 /** Meter range. Above ~8k there is little musical energy to show. */
 const METER_MIN_HZ = 40;
 const METER_MAX_HZ = 8000;
@@ -97,7 +107,7 @@ export class PcmScheduler {
     this.gain = this.ctx.createGain();
     this.gain.gain.value = volume;
 
-    // Sources -> analyser -> lead -> gain -> out. Tapping ahead of the gain
+    // Sources -> analyser -> lead -> leveler -> gain -> out. Tapping ahead of the gain
     // keeps the meter reading the music rather than the master volume, so
     // muting an A/B arm doesn't flatten the bars.
     this.analyser = this.ctx.createAnalyser();
@@ -123,7 +133,12 @@ export class PcmScheduler {
     split.connect(new GainNode(this.ctx, { gain: -0.5 }), 1).connect(this.side);
     this.side.connect(merge, 0, 0);
     this.side.connect(new GainNode(this.ctx, { gain: -1 })).connect(merge, 0, 1);
-    merge.connect(this.lift).connect(this.gain).connect(this.ctx.destination);
+    merge
+      .connect(this.lift)
+      .connect(new DynamicsCompressorNode(this.ctx, LEVELER))
+      .connect(new GainNode(this.ctx, { gain: LEVEL_TRIM }))
+      .connect(this.gain)
+      .connect(this.ctx.destination);
 
     this.volume = volume;
   }

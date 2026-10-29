@@ -286,6 +286,20 @@ type Knobs = Pick<MixConfig, 'density' | 'brightness'>;
  * Gemini can't restructure the eyes' mix. A target matches by id, or by label
  * when the eyes rebuilt the tracks while Gemini was thinking.
  */
+const FILLER = new Set(['a', 'an', 'and', 'the', 'with', 'of', 'in', 'on', 'at', 'to']);
+
+/**
+ * Two wordings close enough to be one idea: half their words or more in
+ * common. Every rewrite is a crossfade, so "soft, hazy and golden" becoming
+ * "soft, warm and golden" would only churn the music.
+ */
+export function sameIdea(a: string, b: string): boolean {
+  const words = (s: string) => new Set(s.toLowerCase().match(/\p{L}+/gu)?.filter((w) => !FILLER.has(w)));
+  const [x, y] = [words(a), words(b)];
+  const shared = [...x].filter((w) => y.has(w)).length;
+  return shared >= 0.5 * (x.size + y.size - shared);
+}
+
 export function keepRefinement(actions: Action[], tracks: Track[], knobs: Knobs) {
   const find = (target: string) =>
     tracks.find((t) => t.id === target) ?? tracks.find((t) => t.label.toLowerCase() === target.toLowerCase());
@@ -296,7 +310,7 @@ export function keepRefinement(actions: Action[], tracks: Track[], knobs: Knobs)
   for (const action of actions) {
     if (action.type === 'MODIFY_TRACK' && action.prompt) {
       const track = find(action.target);
-      if (!track || track.label === 'Style' || track.prompt === action.prompt) continue;
+      if (!track || track.label === 'Style' || sameIdea(track.prompt, action.prompt)) continue;
       kept.push({ type: 'MODIFY_TRACK', target: track.id, prompt: action.prompt });
       words.set(track.label, action.prompt);
     } else if (action.type === 'SET_CONFIG') {

@@ -124,7 +124,7 @@ Reimagine with that key, which never reaches the browser. Cap what it can
 cost: add a rate limit on `/api/gemini` in Vercel's Firewall and a budget on
 the key's Google Cloud project. Each listener streams about 18 MB a minute
 through the function, and Vercel Hobby ends each connection after 5 minutes
-(skuzic reconnects, with a short dip).
+(skuzic opens the next one beforehand and hands the music over).
 
 To keep bots off the shared key, add Cloudflare Turnstile: make a widget for
 your domain in Cloudflare's dashboard (Invisible or Managed), set its keys as

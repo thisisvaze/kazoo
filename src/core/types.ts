@@ -109,6 +109,9 @@ export const INITIAL_CONFIG: MixConfig = {
   muteDrums: false,
 };
 
+/** One bar at this tempo, in ms. Every vibe plays in four. */
+export const barMs = (bpm: number) => (4 * 60_000) / bpm;
+
 export const INITIAL_STATE: SkuzicState = {
   backend: 'lyria',
   tracks: [],
