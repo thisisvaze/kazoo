@@ -1,5 +1,5 @@
 import { Scale } from '@google/genai';
-import { LyriaEngine, checkGeminiKey, toApiConfig } from '../src/audio/lyria';
+import { LyriaEngine, checkGeminiKey, isBusy, toApiConfig } from '../src/audio/lyria';
 import { breathConfig, breathTracks, nextForm, type Form } from '../src/core/form';
 import { attend, frictionLevel, leadOf, slantOf } from '../src/audio/touch';
 import {
@@ -528,6 +528,10 @@ check('no Lyria for the key says so', /Lyria/.test((await checkGeminiKey('k', go
 check('no network says so', /reach Google/.test(
   (await checkGeminiKey('k', async () => { throw new TypeError('offline'); })) ?? '',
 ));
+check('a full key reads as busy', isBusy('RESOURCE_EXHAUSTED: too many concurrent sessions'));
+check('a spent quota reads as busy', isBusy('You exceeded your current quota.'));
+check('an ordinary drop is not busy', !isBusy('The music stream closed.') && !isBusy());
+check('a bad request is not busy', !isBusy('Invalid argument: weightedPrompts'));
 
 console.log('drawing shortcuts');
 const shortcutKey = { key: '', metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, isComposing: false, defaultPrevented: false };

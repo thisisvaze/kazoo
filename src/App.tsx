@@ -10,7 +10,7 @@ import {
   type Lead,
   type MusicEngine,
 } from './audio/engine';
-import { LyriaEngine } from './audio/lyria';
+import { LyriaEngine, isBusy } from './audio/lyria';
 import { DEFAULT_BRIDGE_URL, MagentaEngine } from './audio/magenta';
 import { VibePreview } from './audio/preview';
 import { reduce, reduceAll } from './core/reducer';
@@ -240,6 +240,8 @@ export default function App() {
   });
   const [apiKey, setApiKey] = useState(() => load(KEYS.apiKey, ''));
   const [keyDialogOpen, setKeyDialogOpen] = useState(false);
+  /** The key dialog opened because the shared key is full. */
+  const [busy, setBusy] = useState(false);
   /** The hosted demo's relay holds a key, so playing doesn't need one. */
   const [demo, setDemo] = useState(false);
   const demoRef = useRef(demo);
@@ -537,6 +539,11 @@ export default function App() {
         setStatus(s);
         setStatusDetail(detail ?? '');
         if (s === 'error' && detail) pushLog({ event: 'engine error', error: detail });
+        // The shared key is full: say so kindly, and offer a key of one's own.
+        if (s === 'error' && !apiKeyRef.current && isBusy(detail)) {
+          setBusy(true);
+          setKeyDialogOpen(true);
+        }
       },
       // A filtered prompt matters in either arm — that arm no longer sounds
       // like the plan the user is judging.
@@ -1813,7 +1820,15 @@ export default function App() {
       <KeyDialog
         open={keyDialogOpen}
         demo={demo}
-        onClose={() => setKeyDialogOpen(false)}
+        busy={busy}
+        onClose={() => {
+          setKeyDialogOpen(false);
+          setBusy(false);
+        }}
+        onRetry={() => {
+          setKeyDialogOpen(false);
+          void start();
+        }}
         onConnect={connectKey}
       />
 

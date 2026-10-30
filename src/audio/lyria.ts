@@ -69,6 +69,15 @@ export async function checkGeminiKey(key: string, fetchFn: typeof fetch = fetch)
   return `Google couldn't check the key just now (error ${res.status}). Try again in a moment.`;
 }
 
+/**
+ * Whether Google closed the stream because the key is full: too many sessions
+ * at once, or its quota spent. On the shared demo key, that's a crowd, not a fault.
+ * ponytail: Google doesn't document Lyria's wording, so this matches the usual
+ * words; pass the close code through too if a busy close ever slips past.
+ */
+export const isBusy = (reason = '') =>
+  /quota|exhaust|rate.?limit|too many|concurren|capacity|overload|try again later|\b429\b/i.test(reason);
+
 export function toApiConfig(config: MixConfig): LiveMusicGenerationConfig {
   return {
     bpm: config.bpm,

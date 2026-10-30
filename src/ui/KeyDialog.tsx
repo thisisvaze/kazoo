@@ -27,13 +27,18 @@ function Step({ n, children }: { n: number; children: ReactNode }) {
 export function KeyDialog({
   open,
   demo,
+  busy,
   onClose,
+  onRetry,
   onConnect,
 }: {
   open: boolean;
   /** The shared demo key is playing; this key would replace it. */
   demo: boolean;
+  /** Opened because the shared key is full: offer to wait it out, too. */
+  busy: boolean;
   onClose: () => void;
+  onRetry: () => void;
   /** Only ever called with a key Google accepted. */
   onConnect: (key: string) => void;
 }) {
@@ -82,10 +87,12 @@ export function KeyDialog({
               autoFocus
               className="font-display text-xl font-semibold tracking-[-0.02em] outline-none"
             >
-              {demo ? 'Use your own Gemini key' : 'Connect your Gemini key'}
+              {busy ? 'Lots of people are drawing right now' : demo ? 'Use your own Gemini key' : 'Connect your Gemini key'}
             </h2>
             <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
-              {demo
+              {busy
+                ? "Everyone here plays on skuzic's one free key, and it's full for the moment. Give it a minute and try again, or play right away on a free key from your own Google account."
+                : demo
                 ? "Google's Lyria model plays the music. Everyone here shares skuzic's key, so it can get busy. A free key from your own Google account gives you your own quota."
                 : "skuzic has no accounts. Google's Lyria model plays the music live, on a free key from your own Google account."}
             </p>
@@ -147,6 +154,11 @@ export function KeyDialog({
           <Button type="submit" variant="default" className="h-11" disabled={!key.trim() || checking}>
             {checking ? 'Checking with Google…' : 'Connect'}
           </Button>
+          {busy && (
+            <Button type="button" variant="ghost" className="h-11" onClick={onRetry}>
+              Try the shared key again
+            </Button>
+          )}
         </form>
 
         <p className="flex gap-2 text-[12px] leading-snug text-muted-foreground">

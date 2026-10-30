@@ -105,6 +105,9 @@ const server = http.createServer((req, res) => {
 const passable = (code) => (code >= 1000 && code <= 1014 && ![1004, 1005, 1006].includes(code)) || code >= 3000;
 
 function relay(client) {
+  // `SKUZIC_FAKE_BUSY=1 pnpm dev`: Google turns the stream away as if the key were full, to see the busy popup.
+  if (process.env.SKUZIC_FAKE_BUSY)
+    return client.once('message', () => client.close(1013, 'RESOURCE_EXHAUSTED: too many concurrent sessions'));
   const google = new WebSocket(`${LYRIA}?key=${key()}`);
   const early = [];
   client.on('message', (data, binary) => {
