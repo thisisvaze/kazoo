@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import type { Action, SkuzicState } from '../core/types';
+import type { Action, KazooState } from '../core/types';
 import type { CanvasHandle } from '../ui/DrawCanvas';
 import type { Vibe } from '../vision/eyes';
 import { Perception, type Page, type Snapshot } from './controller';
@@ -33,7 +33,7 @@ export interface LabHost {
   /** Keeps the old eyes from reading while the lab replays its scenes. */
   hold: (on: boolean) => void;
   dispatch: (action: Action) => void;
-  state: () => SkuzicState;
+  state: () => KazooState;
   /** The style picked: its idiom, and which instruments the timbre map may choose. */
   vibe: () => Vibe;
   /** What the old eyes make of the page, to compare. */

@@ -1,4 +1,4 @@
-# How skuzic works
+# How Kazoo works
 
 You draw. Every stroke rings in key straight away, from a small sound engine
 in the browser. When you lift the pen, SigLIP 2 reads the page, also in the
@@ -14,7 +14,7 @@ stitching.
 
 ```
 pen-up ──▶ SigLIP 2 (in the browser) ──▶ mix ────┐
-                                                  ├──▶ Action[] ──▶ reducer ──▶ SkuzicState
+                                                  ├──▶ Action[] ──▶ reducer ──▶ KazooState
 Reimagine / typed event ──▶ planner (Gemini) ─────┘                                  │
                                                                      weighted prompts + config
                                                                                       ▼

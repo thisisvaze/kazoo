@@ -11,7 +11,7 @@ import './settings.css';
 
 export type Theme = 'system' | 'light' | 'dark';
 
-const BRIDGE_HELP = 'https://github.com/thisisvaze/skuzic/blob/main/server/README.md';
+const BRIDGE_HELP = 'https://github.com/thisisvaze/kazoo/blob/main/server/README.md';
 
 const RESPONSE_HINTS: Record<PlannerConfigId, string> = {
   sparse: 'Start quiet. Add more sound as your drawing grows.',
@@ -178,7 +178,7 @@ export function Settings({
 
           <Disclosure
             title="Connection"
-            summary={apiKey ? 'Using your Gemini key' : demo ? 'Using the skuzic demo' : 'Add a Gemini key to connect'}
+            summary={apiKey ? 'Using your Gemini key' : demo ? 'Using the Kazoo demo' : 'Add a Gemini key to connect'}
             open={!apiKey && !demo ? true : undefined}
           >
             <div>

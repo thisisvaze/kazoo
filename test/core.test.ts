@@ -22,7 +22,7 @@ import vectors from '../src/vision/palette-vectors.json';
 import palette from '../src/vision/palette.json';
 import { maxTracksFor, reduce, reduceAll } from '../src/core/reducer';
 import { normalize } from '../src/core/schema';
-import { INITIAL_STATE, type Action, type MixConfig, type SkuzicState } from '../src/core/types';
+import { INITIAL_STATE, type Action, type MixConfig, type KazooState } from '../src/core/types';
 import { drawingShortcut } from '../src/ui/drawing-shortcuts';
 
 const MAX_TRACKS = maxTracksFor('lyria');
@@ -48,7 +48,7 @@ const add = (label: string, prompt: string, volume: number): Action => ({
 console.log('reducer');
 
 // Adding tracks
-let s: SkuzicState = reduceAll(INITIAL_STATE, [
+let s: KazooState = reduceAll(INITIAL_STATE, [
   add('Bed', 'warm ambient pad', 0.6),
   add('Lead', 'bright marimba arpeggio', 0.9),
 ]);

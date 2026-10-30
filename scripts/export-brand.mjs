@@ -5,7 +5,7 @@ import { PNG } from 'pngjs';
 
 // The vector mark is the single source of truth. It sits centred in a 1024
 // square, so the app icon is the same art with that square as its viewBox.
-const mark = readFileSync('public/brand/skuzic-mark.svg', 'utf8');
+const mark = readFileSync('public/brand/kazoo-mark.svg', 'utf8');
 const icon = mark.replace(/viewBox="[^"]*"/, 'viewBox="0 0 1024 1024"');
 
 function png(svg, path, width, background) {

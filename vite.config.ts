@@ -14,7 +14,7 @@ import tailwindcss from '@tailwindcss/vite';
  */
 function logSink(): Plugin {
   return {
-    name: 'skuzic-log-sink',
+    name: 'kazoo-log-sink',
     configureServer(server) {
       const dir = fileURLToPath(new URL('./.logs', import.meta.url));
       mkdirSync(dir, { recursive: true });
@@ -51,7 +51,7 @@ function logSink(): Plugin {
  */
 function perceptionSink(): Plugin {
   return {
-    name: 'skuzic-perception-sink',
+    name: 'kazoo-perception-sink',
     configureServer(server) {
       const root = fileURLToPath(new URL('.', import.meta.url));
       server.middlewares.use('/__perception', (req, res) => {
@@ -104,7 +104,7 @@ function perceptionSink(): Plugin {
  */
 function demoRelay(key: string | undefined): Plugin {
   return {
-    name: 'skuzic-demo-relay',
+    name: 'kazoo-demo-relay',
     async configureServer(server) {
       if (!key) return;
       process.env.GEMINI_API_KEY = key;

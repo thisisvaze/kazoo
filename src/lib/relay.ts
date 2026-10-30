@@ -1,5 +1,5 @@
 /**
- * The hosted demo's relay (api/gemini.mjs) adds skuzic's own key on the
+ * The hosted demo's relay (api/gemini.mjs) adds Kazoo's own key on the
  * server, so a visitor can play without one. An empty key means "go through
  * the relay"; a key the artist connected goes straight to Google instead.
  */
@@ -57,8 +57,8 @@ let script: Promise<unknown> | undefined;
 async function turnstileToken(sitekey: string): Promise<string> {
   await (script ??= new Promise((resolve, reject) => {
     const tag = document.createElement('script');
-    tag.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=skuzicTurnstile';
-    Object.assign(window, { skuzicTurnstile: resolve });
+    tag.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=kazooTurnstile';
+    Object.assign(window, { kazooTurnstile: resolve });
     tag.onerror = () => {
       script = undefined;
       tag.remove();

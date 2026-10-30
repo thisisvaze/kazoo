@@ -80,7 +80,7 @@ model = ct.convert(
 )
 model = linear_quantize_weights(model, OptimizationConfig(global_config=OpLinearQuantizerConfig(
     mode="linear_symmetric", dtype="int4", granularity="per_block", block_size=16)))
-model.author = "SigLIP 2 by Google, converted for skuzic"
+model.author = "SigLIP 2 by Google, converted for Kazoo"
 model.license = "Apache-2.0"
 model.short_description = "A drawing in, a unit-length SigLIP 2 image embedding out."
 

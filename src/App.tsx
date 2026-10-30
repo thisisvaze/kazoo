@@ -16,7 +16,7 @@ import { VibePreview } from './audio/preview';
 import { reduce, reduceAll } from './core/reducer';
 import { musicPrompts } from './core/music-prompts';
 import { breathConfig, breathTracks, nextForm, type Form } from './core/form';
-import { INITIAL_STATE, barMs, type Action, type Backend, type SkuzicState } from './core/types';
+import { INITIAL_STATE, barMs, type Action, type Backend, type KazooState } from './core/types';
 import { addRecord, countRecords, exportDataset, type AbRecord } from './lib/dataset';
 import { KEYS, load, save } from './lib/persist';
 import { relayAvailable, relayPass } from './lib/relay';
@@ -62,7 +62,7 @@ import { KeyDialog } from './ui/KeyDialog';
 import { DrawCanvas, type CanvasHandle } from './ui/DrawCanvas';
 import { Equalizer } from './ui/Equalizer';
 import { Landing } from './ui/Landing';
-import { SkuzicLogo } from './components/SkuzicLogo';
+import { KazooLogo } from './components/KazooLogo';
 import { Mixer } from './ui/Mixer';
 import { Settings, type Theme } from './ui/Settings';
 import { VibeStart } from './ui/VibePicker';
@@ -136,14 +136,14 @@ interface AbVariantPlan {
   model: PlannerModel;
   plan: Plan;
   /** reduceAll(base, plan.actions) — what auditioning this arm sounds like. */
-  next: SkuzicState;
+  next: KazooState;
 }
 
 /** Two plans for the same event, waiting on the user's ear. */
 interface PendingAb {
   event: string;
   image?: string;
-  base: SkuzicState;
+  base: KazooState;
   /** Display order — [0] is A, [1] is B. Shuffled so A isn't always the same arm. */
   variants: AbVariantPlan[];
   /** Canvas encode ms and buffer seconds at plan time, for the log entry. */
@@ -285,7 +285,7 @@ export default function App() {
 
   // The planner needs the mix as of the moment the button was tapped, not as of
   // the render that created the handler.
-  const stateRef = useRef<SkuzicState>(state);
+  const stateRef = useRef<KazooState>(state);
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
@@ -358,7 +358,7 @@ export default function App() {
   /** When the pen last left the paper, ms. */
   const penAt = useRef(0);
   /** The knobs as the engine plays them: in a breath, without the drums and thinner. */
-  const playedConfig = (s: SkuzicState) => (formRef.current.breath ? breathConfig(s.config, s.configLocks) : s.config);
+  const playedConfig = (s: KazooState) => (formRef.current.breath ? breathConfig(s.config, s.configLocks) : s.config);
   useEffect(() => {
     statusRef.current = status;
   }, [status]);
@@ -493,7 +493,7 @@ export default function App() {
    * tracks effect above (including the empty-mix pause), plus config, which
    * the effect leaves to its own sync.
    */
-  const steerEngine = useCallback((s: SkuzicState) => {
+  const steerEngine = useCallback((s: KazooState) => {
     const engine = engineRef.current;
     if (!engine) return;
 
@@ -570,7 +570,7 @@ export default function App() {
    * of lead-in at worst. Lyria only: the local Magenta bridge runs one session.
    */
   const spawnAudition = useCallback(
-    async (next: SkuzicState) => {
+    async (next: KazooState) => {
       if (stateRef.current.backend !== 'lyria') return;
 
       const box: { engine: MusicEngine | null } = { engine: null };
@@ -1612,11 +1612,11 @@ export default function App() {
         <header className="flex h-14 shrink-0 items-center gap-2 px-3 sm:px-5">
           <button
             type="button"
-            title="About skuzic"
+            title="About Kazoo"
             onClick={() => go('landing')}
             className="shrink-0 rounded-full px-2 py-1.5 outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/60"
           >
-            <SkuzicLogo compact />
+            <KazooLogo compact />
           </button>
 
           {/* Keep the same compact transport available when the mixer is closed. */}

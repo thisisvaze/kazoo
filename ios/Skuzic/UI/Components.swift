@@ -120,14 +120,14 @@ struct Wordmark: View {
                 .scaledToFit()
                 .frame(width: 33.8, height: 28.4)
             if showName {
-                Text("skuzic")
+                Text("kazoo")
                     .font(.system(size: 19, weight: .bold))
                     .tracking(-0.4)
                     .foregroundStyle(Theme.ink)
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("skuzic")
+        .accessibilityLabel("Kazoo")
     }
 }
 

@@ -8,13 +8,13 @@ web
 
 ## Users
 
-Anyone who doodles. They need no music skills or music words: they open skuzic on a laptop, tablet or phone for a few minutes of play, draw whatever comes to mind, and want to hear something they enjoy.
+Anyone who doodles. They need no music skills or music words: they open Kazoo on a laptop, tablet or phone for a few minutes of play, draw whatever comes to mind, and want to hear something they enjoy.
 
-Two secondary audiences follow from the confirmed success goals: builders who want to extend skuzic (the palette, the eyes, the engines), and people following real-time AI music who come to see what is possible.
+Two secondary audiences follow from the confirmed success goals: builders who want to extend Kazoo (the palette, the eyes, the engines), and people following real-time AI music who come to see what is possible.
 
 ## Product Purpose
 
-skuzic is for making art with music: you draw, and the music plays along. It is not a music maker (the user, 2026-10-07: "the idea of this app is not to make music - but do art with music"). The music leans with your hand straight away; when you lift the pen the page is read and the music follows, so one continuous song bends around the drawing.
+Kazoo is for making art with music: you draw, and the music plays along. It is not a music maker (the user, 2026-10-07: "the idea of this app is not to make music - but do art with music"). The music leans with your hand straight away; when you lift the pen the page is read and the music follows, so one continuous song bends around the drawing.
 
 Success right now (all three confirmed):
 
@@ -28,7 +28,7 @@ The song never stops or restarts; it bends to the page. Three things together ma
 
 ## Operating Context
 
-- Played in the browser: the landing is at skuzic.vercel.app and the studio at skuzic.vercel.app/app (one app; vercel.json rewrites /app to it; going back to the landing pauses the music and keeps the drawing, and "Back to your drawing" picks the song up again), on a shared demo key: free, no sign-up. A visitor can connect their own free Gemini key (checked with Google, kept in the browser) when the shared key is slow or busy.
+- Played in the browser: the landing is at playkazoo.vercel.app and the studio at playkazoo.vercel.app/app (one app; vercel.json rewrites /app to it; going back to the landing pauses the music and keeps the drawing, and "Back to your drawing" picks the song up again), on a shared demo key: free, no sign-up. A visitor can connect their own free Gemini key (checked with Google, kept in the browser) when the shared key is slow or busy.
 - Best with headphones. Browsers start audio only after a gesture, so the landing's start action is also what unlocks sound.
 - The first visit downloads SigLIP 2's image model (63 MB, cached after that).
 - A blank page offers vibes to start from, each with a short preview loop: Lo-fi, Ambient, Solo piano, Indie folk, Bossa nova, Jazz café or String quartet. Ambient is the default, so a visitor who just draws hears ambient.
@@ -42,12 +42,12 @@ The song never stops or restarts; it bends to the page. Three things together ma
 - The pen's sound runs locally and works before the music connects.
 - iPad and iPhone: a native port exists (`ios/`, on-device SigLIP via Core ML, the same pen sound). It is not distributed yet; a public release is planned but undated. Never present it as available.
 - Lyria RealTime is an experimental Google model, so limits can change, and the shared key can be busy.
-- Hosted relay: Vercel Hobby ends each connection after 5 minutes; skuzic opens the next one beforehand and hands the music over with only a brief dip.
-- Open source under MIT at github.com/thisisvaze/skuzic.
+- Hosted relay: Vercel Hobby ends each connection after 5 minutes; Kazoo opens the next one beforehand and hands the music over with only a brief dip.
+- Open source under MIT at github.com/thisisvaze/kazoo.
 
 ## Brand Commitments
 
-- Name: "skuzic", always lowercase.
+- Name: "Kazoo" in sentences. The wordmark stays lowercase, "kazoo".
 - Line: "Make art with music." (since 2026-10-07; the landing headline and page title). The README and social card still carry the older "Draw something. Hear it turn into music." until they are redone.
 - Voice: plain, warm and concrete, in short sentences; it describes what you hear and do before the technology. No em dashes in copy. Credits the author as "An experiment by Aaditya Vaze."
 - Terminology: call it "the music", never "the band" (the user's call, 2026-10-07). On the web, layers represent the drawing's moods and instruments; a vibe is the style they are played in, with no separate Style channel or intensity. "Your pen" is the instant sound under the nib. The primary action is "Start drawing", never "Make music".

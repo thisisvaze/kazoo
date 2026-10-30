@@ -2,7 +2,7 @@ import { GoogleGenAI, MediaResolution, ThinkingLevel, Type, type Schema } from '
 import { geminiAuth, relayPass } from '../lib/relay';
 import { CAPABILITIES } from '../audio/engine';
 import { PLAN_SCHEMA, normalize } from '../core/schema';
-import type { Action, MixConfig, SkuzicState, Track } from '../core/types';
+import type { Action, MixConfig, KazooState, Track } from '../core/types';
 import { DEFAULT_VIBE, type Vibe } from '../vision/eyes';
 import palette from '../vision/palette.json';
 import {
@@ -38,7 +38,8 @@ export function isPlannerModel(value: string): value is PlannerModel {
 }
 
 /** Shared by every config: identity, how much to play, and how to write a prompt. */
-const CORE_INSTRUCTION = `You are the arranger for skuzic, a live generative-music instrument.
+// Neither instruction names the app: told it arranges for "Kazoo", Gemini would hear a kazoo.
+const CORE_INSTRUCTION = `You are the arranger for a live generative-music instrument.
 
 You receive an EVENT (something the user just did — a phrase like "user drew a
 house", and sometimes an image of their drawing) plus the CURRENT MIX. You reply
@@ -217,7 +218,7 @@ Rules:
  * and reply shape: under the arranger's, Gemini answered with knob moves only,
  * leaving every layer's words as they were.
  */
-const REFINE_INSTRUCTION = `You voice the music for skuzic, a live instrument: someone is drawing, and this
+const REFINE_INSTRUCTION = `You voice the music for a live instrument: someone is drawing, and this
 plays while they do. A fast on-device reader has just set the mix. It names the
 things on the page ("water", "mountains"), gives each a stock mood written
 before anyone drew anything ("flowing and serene"), and picks instruments. It
@@ -354,7 +355,7 @@ export interface Plan {
  * Without this the planner happily emits bpm changes for MRT2, which silently
  * do nothing — the actions look plausible in the log but never reach audio.
  */
-function describeCapabilities(state: SkuzicState): string {
+function describeCapabilities(state: KazooState): string {
   const caps = CAPABILITIES[state.backend];
   const supported = Object.entries({
     bpm: caps.bpm,
@@ -378,7 +379,7 @@ function describeCapabilities(state: SkuzicState): string {
   );
 }
 
-export function describeState(state: SkuzicState, vibe: Vibe = DEFAULT_VIBE): string {
+export function describeState(state: KazooState, vibe: Vibe = DEFAULT_VIBE): string {
   // `from` is the event that created the track. Without it the planner cannot
   // tell which tracks belong to a scene the user has already moved on from,
   // so it only ever layers new material on top of the old mood.
@@ -504,7 +505,7 @@ export function createPlanner(apiKey: string, model: PlannerModel = DEFAULT_PLAN
       // only has room for a line, and a line is not enough to debug a transport
       // failure: the API's own message ("quota exceeded", "model is overloaded")
       // rides on the error object, not on anything we can reconstruct here.
-      console.error(`[skuzic] planner failed after ${elapsed}ms`, error);
+      console.error(`[kazoo] planner failed after ${elapsed}ms`, error);
 
       const message = error instanceof Error && error.message ? error.message : '';
       const detail = message ? ` — ${message}` : '';
@@ -561,7 +562,7 @@ export function createPlanner(apiKey: string, model: PlannerModel = DEFAULT_PLAN
 
   async function planActions(
     event: string,
-    state: SkuzicState,
+    state: KazooState,
     imageDataUrl?: string,
     // Per call rather than baked into the factory, so switching strategy takes
     // effect on the next tap instead of the next session.
@@ -583,7 +584,7 @@ export function createPlanner(apiKey: string, model: PlannerModel = DEFAULT_PLAN
    * The follow-up pass: every layer rewritten for the drawing in its vibe, and
    * the two live knobs, as actions for keepRefinement to vet.
    */
-  async function refine(state: SkuzicState, imageDataUrl: string, vibe: Vibe = DEFAULT_VIBE): Promise<Plan> {
+  async function refine(state: KazooState, imageDataUrl: string, vibe: Vibe = DEFAULT_VIBE): Promise<Plan> {
     const { parts, imageBytes } = partsFor(imageDataUrl, `${describeState(state, vibe)}\n\nEVENT\n${REFINE_EVENT}`);
     const { parsed, request, model: answered, ...usage } = await ask(REFINE_INSTRUCTION, parts, REFINE_SCHEMA);
     const layers = (parsed.layers as { id?: string; words?: string }[] | undefined) ?? [];

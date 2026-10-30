@@ -74,7 +74,7 @@ export async function addRecord(record: AbRecord): Promise<boolean> {
     await tx('readwrite', (s) => s.add(record));
     return true;
   } catch (error) {
-    console.error('[skuzic] failed to save A/B record', error);
+    console.error('[kazoo] failed to save A/B record', error);
     return false;
   }
 }
@@ -96,7 +96,7 @@ export async function exportDataset(): Promise<number> {
   try {
     records = await tx('readonly', (s) => s.getAll());
   } catch (error) {
-    console.error('[skuzic] failed to read A/B records', error);
+    console.error('[kazoo] failed to read A/B records', error);
     return 0;
   }
   if (!records.length) return 0;
@@ -106,7 +106,7 @@ export async function exportDataset(): Promise<number> {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `skuzic-ab-${new Date().toISOString().slice(0, 10)}.jsonl`;
+  a.download = `kazoo-ab-${new Date().toISOString().slice(0, 10)}.jsonl`;
   a.click();
   URL.revokeObjectURL(url);
   return records.length;

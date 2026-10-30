@@ -1,4 +1,4 @@
-# Contributing to skuzic
+# Contributing to Kazoo
 
 Thanks for helping. Bug reports, ideas and pull requests are all welcome.
 
@@ -7,7 +7,7 @@ Thanks for helping. Bug reports, ideas and pull requests are all welcome.
 - **Bugs.** Open an issue with steps to reproduce. Audio bugs are much easier to
   fix with a short screen recording or a screenshot of the mixer's History tab.
 - **The palette.** `src/vision/palette.json` is every vibe, mood and
-  instrument skuzic can play. New entries change how it sounds and need no
+  instrument Kazoo can play. New entries change how it sounds and need no
   audio knowledge. A new vibe also wants a little picture in
   `src/ui/VibePicker.tsx` (until then it borrows the blank page's) and a
   preview loop: `scripts/make-vibe-previews.py <id>` renders one.
@@ -15,7 +15,7 @@ Thanks for helping. Bug reports, ideas and pull requests are all welcome.
   `SYSTEM_INSTRUCTION` in `src/llm/planner.ts`.
 - **New event sources.** Anything that can become an event string fits the
   `event → actions → state` pipe.
-- Issues labelled [`good first issue`](https://github.com/thisisvaze/skuzic/labels/good%20first%20issue).
+- Issues labelled [`good first issue`](https://github.com/thisisvaze/kazoo/labels/good%20first%20issue).
 
 For anything large, open an issue first so we can agree on the approach before
 you spend time on it.
@@ -86,5 +86,5 @@ CI runs the same checks.
 
 ## License of contributions
 
-skuzic is [MIT licensed](LICENSE.md). By opening a pull request you agree that
+Kazoo is [MIT licensed](LICENSE.md). By opening a pull request you agree that
 your contribution is released under the same license.

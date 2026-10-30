@@ -2,7 +2,7 @@
 
 Magenta RealTime 2 ships no server component. It's a Python library plus an
 MLX/C++ engine. `magenta_bridge.py` wraps it in a WebSocket that speaks the
-same shape skuzic already uses for Lyria, so the browser can treat both
+same shape Kazoo already uses for Lyria, so the browser can treat both
 backends identically.
 
 ## Requirements
@@ -27,7 +27,7 @@ python3 -m venv .venv
 Pass the model name explicitly: bare `mrt models download` opens an
 interactive picker that will hang a non-interactive shell.
 
-In VS Code this is the **skuzic: setup magenta** task; it's idempotent.
+In VS Code this is the **kazoo: setup magenta** task; it's idempotent.
 
 ### Two weight formats
 
@@ -49,7 +49,7 @@ raw checkpoint instead.
 python server/magenta_bridge.py --size mrt2_base
 ```
 
-Then pick **Magenta RT2 (local)** in the skuzic top bar and hit start. The
+Then pick **Magenta RT2 (local)** in the Kazoo top bar and hit start. The
 Gemini API key is still required, since the planner runs on Gemini regardless of
 which model generates audio.
 
@@ -60,7 +60,7 @@ Useful flags:
   latency, more overhead per step
 - `--port 8765`: override, then set `VITE_MAGENTA_BRIDGE_URL` to match
 - `--no-harmony`: let MRT2 pick its own key and chords instead of holding it
-  to skuzic's F major loop (see [Staying in key](#staying-in-key))
+  to Kazoo's F major loop (see [Staying in key](#staying-in-key))
 
 ## How prompt weighting works
 
@@ -75,11 +75,11 @@ The C++ engine exposes the same idea natively as `reblend_musiccoca_tokens`.
 
 ## What MRT2 does not have
 
-MRT2 has no tempo, key, density, or brightness conditioning. skuzic hides
+MRT2 has no tempo, key, density, or brightness conditioning. Kazoo hides
 those knobs when this backend is selected, and the planner is told not to emit
 them. What does map across:
 
-| skuzic | MRT2 |
+| Kazoo | MRT2 |
 | --- | --- |
 | track prompts + volume | blended MusicCoCa style embedding |
 | guidance | `cfg_musiccoca` (rescaled to −1…7) |

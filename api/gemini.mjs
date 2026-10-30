@@ -12,14 +12,14 @@ import WebSocket, { WebSocketServer } from 'ws';
 
 const GOOGLE = 'generativelanguage.googleapis.com';
 const LYRIA = `wss://${GOOGLE}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateMusic`;
-// Only what skuzic itself calls (PLANNER_MODELS in src/llm/planner.ts), so the
+// Only what Kazoo itself calls (PLANNER_MODELS in src/llm/planner.ts), so the
 // key can't be borrowed for anything else.
 const PLAN = /^\/api\/gemini\/v1beta\/models\/(gemini-3\.8-flash|gemini-3\.5-flash-lite):generateContent$/;
 const MAX_BODY = 4 * 1024 * 1024;
 
 const key = () => process.env.GEMINI_API_KEY;
 
-// Browsers always send Origin on these requests; only skuzic's own pages may
+// Browsers always send Origin on these requests; only Kazoo's own pages may
 // spend the key. A script can fake it, so the real limits are Turnstile (below),
 // the Firewall rule and the key's quota (see README, "Hosting your own").
 function sameSite(req) {
@@ -105,8 +105,8 @@ const server = http.createServer((req, res) => {
 const passable = (code) => (code >= 1000 && code <= 1014 && ![1004, 1005, 1006].includes(code)) || code >= 3000;
 
 function relay(client) {
-  // `SKUZIC_FAKE_BUSY=1 pnpm dev`: Google turns the stream away as if the key were full, to see the busy popup.
-  if (process.env.SKUZIC_FAKE_BUSY)
+  // `KAZOO_FAKE_BUSY=1 pnpm dev`: Google turns the stream away as if the key were full, to see the busy popup.
+  if (process.env.KAZOO_FAKE_BUSY)
     return client.once('message', () => client.close(1013, 'RESOURCE_EXHAUSTED: too many concurrent sessions'));
   const google = new WebSocket(`${LYRIA}?key=${key()}`);
   const early = [];

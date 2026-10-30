@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="142.5 240.5 737.5 543">
-  <!-- The skuzic mark: a bold scribble running into three bars. It sits centred in a
+  <!-- The Kazoo mark: a bold scribble running into three bars. It sits centred in a
        1024 square, so the app icon is this art with that square as its viewBox
-       (scripts/export-brand.mjs). docs/brand/skuzic-mark-bold.svg is the same art as
+       (scripts/export-brand.mjs). docs/brand/kazoo-mark-bold.svg is the same art as
        exported from Figma. Each piece carries its own stretch of the gradient. -->
   <defs>
   <linearGradient id="ink-scribble" x1="-0.209279" y1="-256" x2="639.791" y2="-256" gradientUnits="userSpaceOnUse">

@@ -34,7 +34,7 @@ export interface MixConfig {
 
 export type ConfigLocks = Partial<Record<keyof MixConfig, boolean>>;
 
-export interface SkuzicState {
+export interface KazooState {
   backend: Backend;
   tracks: Track[];
   /** Literal soundscapes bypass musical style context, including during A/B auditions. */
@@ -81,7 +81,7 @@ export type Action =
  * without a context reset, so energy can swing wide while the pulse holds.
  */
 /**
- * skuzic only plays calm music, so every setting lives inside a calm band.
+ * Kazoo only plays calm music, so every setting lives inside a calm band.
  * Tempo and guidance are held to theirs where config changes land (the
  * reducer). Energy and brightness keep a 0..1 dial that the page, the sliders
  * and Gemini all use in full; only the way out to Lyria squeezes it into the
@@ -112,7 +112,7 @@ export const INITIAL_CONFIG: MixConfig = {
 /** One bar at this tempo, in ms. Every vibe plays in four. */
 export const barMs = (bpm: number) => (4 * 60_000) / bpm;
 
-export const INITIAL_STATE: SkuzicState = {
+export const INITIAL_STATE: KazooState = {
   backend: 'lyria',
   tracks: [],
   soundEffects: false,

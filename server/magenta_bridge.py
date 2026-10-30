@@ -1,6 +1,6 @@
 """WebSocket bridge exposing Magenta RealTime 2 with a Lyria-shaped interface.
 
-MRT2 ships no server component, so skuzic talks to this instead. It wraps
+MRT2 ships no server component, so Kazoo talks to this instead. It wraps
 `magenta_rt.mlx.system.MagentaRT2System` and speaks the small protocol that
 `src/audio/magenta.ts` expects.
 
@@ -305,7 +305,7 @@ class Session:
 
         elif kind == "config":
             if (guidance := message.get("guidance")) is not None:
-                # skuzic carries Lyria's 0..6 guidance range; MRT2's
+                # Kazoo carries Lyria's 0..6 guidance range; MRT2's
                 # cfg_musiccoca is defined over -1..7 with a 3.0 default.
                 self.guidance = float(np.clip(float(guidance), -1.0, 7.0))
             if (mute := message.get("muteDrums")) is not None:

@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 
-/** The skuzic mark, a bold scribble running into three bars, in the studio's orange, pink and violet pencils on paper. */
-export function SkuzicLogo({
+/** The Kazoo mark, a bold scribble running into three bars, in the studio's orange, pink and violet pencils on paper. */
+export function KazooLogo({
   compact = false,
   className,
 }: {
@@ -12,11 +12,11 @@ export function SkuzicLogo({
   return (
     <span
       role="img"
-      aria-label="skuzic"
+      aria-label="Kazoo"
       className={cn('inline-flex shrink-0 items-center gap-2.5', className)}
     >
       <img
-        src="/brand/skuzic-mark-pencil.svg"
+        src="/brand/kazoo-mark-pencil.svg"
         width="38"
         height="28"
         alt=""
@@ -28,7 +28,7 @@ export function SkuzicLogo({
         aria-hidden="true"
         className={cn('font-display text-[1.25rem] leading-none font-bold tracking-[0.01em]', compact && 'hidden sm:inline')}
       >
-        skuzic
+        kazoo
       </span>
     </span>
   );

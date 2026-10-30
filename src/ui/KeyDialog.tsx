@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { checkGeminiKey } from '../audio/lyria';
 
 const STUDIO = 'https://aistudio.google.com/apikey';
-const SOURCE = 'https://github.com/thisisvaze/skuzic';
+const SOURCE = 'https://github.com/thisisvaze/kazoo';
 
 function Step({ n, children }: { n: number; children: ReactNode }) {
   return (
@@ -20,7 +20,7 @@ function Step({ n, children }: { n: number; children: ReactNode }) {
 }
 
 /**
- * Asking for a key the way a trustworthy app would: why skuzic needs one, how
+ * Asking for a key the way a trustworthy app would: why Kazoo needs one, how
  * to get it, where it goes, and a check with Google before anything is saved.
  * A native modal, like Settings.
  */
@@ -91,10 +91,10 @@ export function KeyDialog({
             </h2>
             <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
               {busy
-                ? "Everyone here plays on skuzic's one free key, and it's full for the moment. Give it a minute and try again, or play right away on a free key from your own Google account."
+                ? "Everyone here plays on Kazoo's one free key, and it's full for the moment. Give it a minute and try again, or play right away on a free key from your own Google account."
                 : demo
-                ? "Google's Lyria model plays the music. Everyone here shares skuzic's key, so it can get busy. A free key from your own Google account gives you your own quota."
-                : "skuzic has no accounts. Google's Lyria model plays the music live, on a free key from your own Google account."}
+                ? "Google's Lyria model plays the music. Everyone here shares Kazoo's key, so it can get busy. A free key from your own Google account gives you your own quota."
+                : "Kazoo has no accounts. Google's Lyria model plays the music live, on a free key from your own Google account."}
             </p>
           </div>
           <button
@@ -164,7 +164,7 @@ export function KeyDialog({
         <p className="flex gap-2 text-[12px] leading-snug text-muted-foreground">
           <Lock className="mt-px size-3.5 shrink-0" />
           <span>
-            Your key is saved only in this browser and only ever sent to Google. skuzic never sees
+            Your key is saved only in this browser and only ever sent to Google. Kazoo never sees
             it, and you can remove it in Settings any time. The code is{' '}
             <a href={SOURCE} target="_blank" rel="noreferrer" className="underline underline-offset-2">
               open source

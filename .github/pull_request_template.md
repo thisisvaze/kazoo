@@ -8,4 +8,4 @@
 
 - [ ] `pnpm typecheck` and `pnpm test` pass
 - [ ] `sh ios/scripts/test-audio.sh` passes (if I touched `ios/`)
-- [ ] I agree to the [contribution terms](https://github.com/thisisvaze/skuzic/blob/main/CONTRIBUTING.md#license-of-contributions)
+- [ ] I agree to the [contribution terms](https://github.com/thisisvaze/kazoo/blob/main/CONTRIBUTING.md#license-of-contributions)

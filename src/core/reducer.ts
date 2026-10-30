@@ -1,5 +1,5 @@
 import { CAPABILITIES } from '../audio/engine';
-import { CALM, clampTo, type Action, type Backend, type MixConfig, type SkuzicState, type Track } from './types';
+import { CALM, clampTo, type Action, type Backend, type MixConfig, type KazooState, type Track } from './types';
 
 /** Lyria has no documented prompt cap; MRT2's engine constant is 6. */
 export const maxTracksFor = (backend: Backend) => CAPABILITIES[backend].maxPrompts;
@@ -26,7 +26,7 @@ function resolve(tracks: Track[], target: string): Track | undefined {
   );
 }
 
-export function reduce(state: SkuzicState, action: Action): SkuzicState {
+export function reduce(state: KazooState, action: Action): KazooState {
   switch (action.type) {
     case 'ADD_TRACK': {
       const track: Track = {
@@ -140,5 +140,5 @@ export function reduce(state: SkuzicState, action: Action): SkuzicState {
   }
 }
 
-export const reduceAll = (state: SkuzicState, actions: Action[]): SkuzicState =>
+export const reduceAll = (state: KazooState, actions: Action[]): KazooState =>
   actions.reduce(reduce, state);

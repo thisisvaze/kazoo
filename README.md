@@ -1,20 +1,20 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/cover-dark.jpg">
-  <img alt="skuzic: a sketchpad that plays along with whatever you draw" src="docs/cover-light.jpg">
+  <img alt="Kazoo: a sketchpad that plays along with whatever you draw" src="docs/cover-light.jpg">
 </picture>
 
-# skuzic
+# Kazoo
 
 **Draw something. Hear it turn into music.**
 
-[![CI](https://github.com/thisisvaze/skuzic/actions/workflows/ci.yml/badge.svg)](https://github.com/thisisvaze/skuzic/actions/workflows/ci.yml)
+[![CI](https://github.com/thisisvaze/kazoo/actions/workflows/ci.yml/badge.svg)](https://github.com/thisisvaze/kazoo/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE.md)
 
 **[Play it now at skuzic.vercel.app](https://skuzic.vercel.app).** No sign-up:
 it plays on a shared key. If the music is slow to start or has gaps, connect
 your own free Gemini key in Settings.
 
-skuzic is an instrument you play with a pen. Sketch a house and the music gets
+Kazoo is an instrument you play with a pen. Sketch a house and the music gets
 warm and woody. Scribble a storm and it darkens. The song never stops or
 restarts. It just keeps bending around whatever you draw.
 
@@ -39,7 +39,7 @@ the whole arrangement from your drawing, or type what you'd like changed instead
 
 Works in the browser and on iPad/iPhone, pen sound and all. On a Mac you can
 also make the music offline with Google's open Magenta RT2 model, but only
-when you run skuzic yourself with the Magenta bridge set up. The hosted site
+when you run Kazoo yourself with the Magenta bridge set up. The hosted site
 always plays Lyria.
 
 ## Run it yourself
@@ -49,7 +49,7 @@ always plays Lyria.
 Paste this into Claude Code, Codex or any coding agent:
 
 ```text
-Clone https://github.com/thisisvaze/skuzic and run it locally for me. Install
+Clone https://github.com/thisisvaze/kazoo and run it locally for me. Install
 with pnpm (enable it with corepack if it's missing), start `pnpm dev`, and
 open http://localhost:5173. I'll connect my own Gemini key in the app when it
 asks.
@@ -66,14 +66,14 @@ and tell me when to pick Magenta RT under Settings → Music engine.
 ### By hand
 
 ```bash
-git clone https://github.com/thisisvaze/skuzic && cd skuzic
+git clone https://github.com/thisisvaze/kazoo && cd kazoo
 pnpm install
 pnpm dev
 ```
 
 Open http://localhost:5173, hit **Start drawing**, and connect a free Gemini
 key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey) when
-it asks. skuzic checks the key with Google before saving it, and it stays in
+it asks. Kazoo checks the key with Google before saving it, and it stays in
 your browser. Or put `GEMINI_API_KEY=...` in `.env` and the dev server plays
 on it like the hosted demo, with no pasting. The first visit also downloads
 SigLIP 2's image model (63 MB, cached after that).
@@ -92,22 +92,22 @@ then, lifting the pen asks Gemini.
 
 ## Build it with us
 
-skuzic is early and there's a lot of fun stuff left to make:
+Kazoo is early and there's a lot of fun stuff left to make:
 
 - 🎛️ **Give it taste.** `src/vision/palette.json` holds the vibes, moods and
   instruments a drawing can turn into. Add a vibe, a mood like "snow", or an
   instrument you love; you don't need to know anything about audio.
 - ✏️ **Read drawings better.** Right now the whole page is one picture. Where
   you draw, how fast, and how hard you press could all shape the music.
-- 🎹 **Draw melodies.** Magenta RT takes piano-roll notes. Today skuzic uses
+- 🎹 **Draw melodies.** Magenta RT takes piano-roll notes. Today Kazoo uses
   them to hold a chord loop; lines could become tunes.
 - 🎚️ **Play it like a deck.** Map a MIDI controller to the mixer, pick a genre,
   or record a clip to share.
 - 🎮 **Play it with anything.** Game events, sensors, scrolling. If it can say
   "something happened", it can make music.
 
-The [open issues](https://github.com/thisisvaze/skuzic/issues) each say where to
-start, and the [good first ones](https://github.com/thisisvaze/skuzic/labels/good%20first%20issue)
+The [open issues](https://github.com/thisisvaze/kazoo/issues) each say where to
+start, and the [good first ones](https://github.com/thisisvaze/kazoo/labels/good%20first%20issue)
 are small. [CONTRIBUTING.md](CONTRIBUTING.md) gets you set up, and
 [docs/how-it-works.md](docs/how-it-works.md) has the long version of how it all
 fits together.
@@ -124,7 +124,7 @@ Reimagine with that key, which never reaches the browser. Cap what it can
 cost: add a rate limit on `/api/gemini` in Vercel's Firewall and a budget on
 the key's Google Cloud project. Each listener streams about 18 MB a minute
 through the function, and Vercel Hobby ends each connection after 5 minutes
-(skuzic opens the next one beforehand and hands the music over).
+(Kazoo opens the next one beforehand and hands the music over).
 
 To keep bots off the shared key, add Cloudflare Turnstile: make a widget for
 your domain in Cloudflare's dashboard (Invisible or Managed), set its keys as

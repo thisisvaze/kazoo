@@ -1,5 +1,5 @@
 ---
-name: skuzic
+name: Kazoo
 description: Make art with music.
 colors:
   paper: "#fcfbf8"
@@ -81,13 +81,13 @@ components:
     typography: "{typography.label}"
 ---
 
-# Design System: skuzic
+# Design System: Kazoo
 
 ## Overview
 
 **Creative North Star: "A box of coloured pencils on good paper"**
 
-skuzic is for making art with music, and the landing looks like it: warm white paper, and every line on it drawn in the studio's own coloured pencils with the same paper grain. The colour lives in what is drawn: the visitor's lines and the example drawing. Everything else stays quiet and lined up, set in Libre Franklin in a warm charcoal, never pure black.
+Kazoo is for making art with music, and the landing looks like it: warm white paper, and every line on it drawn in the studio's own coloured pencils with the same paper grain. The colour lives in what is drawn: the visitor's lines and the example drawing. Everything else stays quiet and lined up, set in Libre Franklin in a warm charcoal, never pure black.
 
 The page is a small playable experiment: one sun-and-sailboat scene draws itself, visitors add their own musical scribbles, and one button opens the studio. With reduced motion the scene rests finished. The user asked for an Experiments with Google feel and rejected the repeated hero and explanation sections (2026-10-07).
 
@@ -178,7 +178,7 @@ Keep the landing short and fun (the user, 2026-10-07): one playable scene, one s
 
 ### Text links and navigation
 - **Style:** charcoal text; underlines are 2px thick, offset 0.2em. Nav links underline on hover; links that lead further in turn pencil blue on hover.
-- **Navigation:** the shared `SkuzicLogo` at left and a GitHub pill at right with the live star count. Its amber star draws itself and shines once on load, then fills and shines again on hover. GitHub and MIT license sit in the compact footer alongside the author credit.
+- **Navigation:** the shared `KazooLogo` at left and a GitHub pill at right with the live star count. Its amber star draws itself and shines once on load, then fills and shines again on hover. GitHub and MIT license sit in the compact footer alongside the author credit.
 - **Focus:** 3px solid charcoal outline, 4px offset, everywhere.
 
 ## Do's and Don'ts
@@ -203,10 +203,10 @@ Keep the landing short and fun (the user, 2026-10-07): one playable scene, one s
 
 ## Shared brand mark
 
-The logo is a bold scribble running into three round-ended bars, short, tall, medium, filled with the web app’s orange–pink–violet gradient (user, 2026-10-07: thicker, clean, never rough or hand-drawn). Use it on every branded surface. The gradient belongs to the mark; the word “skuzic” stays in the surrounding ink color.
+The logo is a bold scribble running into three round-ended bars, short, tall, medium, filled with the web app’s orange–pink–violet gradient (user, 2026-10-07: thicker, clean, never rough or hand-drawn). Use it on every branded surface. The gradient belongs to the mark; the word “Kazoo” stays in the surrounding ink color.
 
-- Web: `src/components/SkuzicLogo.tsx` owns the mark and wordmark for both the landing and studio headers. Compact mode hides only the name on phones and retains the accessible name.
-- Canonical artwork: `public/brand/skuzic-mark.svg`, pure vector from the Figma export: the scribble and each bar are one path, each with its own stretch of the brand gradient, centred in a 1024 square so the app icon is the same art. There are no external image references or page-level SVG IDs. `docs/brand/skuzic-mark-bold.svg` is the Figma export itself.
+- Web: `src/components/KazooLogo.tsx` owns the mark and wordmark for both the landing and studio headers. Compact mode hides only the name on phones and retains the accessible name.
+- Canonical artwork: `public/brand/kazoo-mark.svg`, pure vector from the Figma export: the scribble and each bar are one path, each with its own stretch of the brand gradient, centred in a 1024 square so the app icon is the same art. There are no external image references or page-level SVG IDs. `docs/brand/kazoo-mark-bold.svg` is the Figma export itself.
 - Browser icon: the same canonical SVG; `public/favicon.svg` remains a generated alias for previously cached URLs.
 - iPad: `Wordmark` uses the generated `SkuzicMark` asset, and AppIcon uses the same gradient mark on warm paper. The web home-screen icon uses the same composition.
 - Exports: run `pnpm brand:export` after updating the SVG. The exporter produces transparent inline artwork and opaque RGB app/home-screen icons.
