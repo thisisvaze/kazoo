@@ -10,7 +10,7 @@
 [![CI](https://github.com/thisisvaze/kazoo/actions/workflows/ci.yml/badge.svg)](https://github.com/thisisvaze/kazoo/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE.md)
 
-**[Play it now at skuzic.vercel.app](https://skuzic.vercel.app).** No sign-up:
+**[Play it now at playkazoo.vercel.app](https://playkazoo.vercel.app).** No sign-up:
 it plays on a shared key. If the music is slow to start or has gaps, connect
 your own free Gemini key in Settings.
 
@@ -81,7 +81,7 @@ SigLIP 2's image model (63 MB, cached after that).
 **Magenta RT2, offline.** Apple Silicon only. Follow
 [server/README.md](server/README.md), run the bridge, then pick **Magenta RT**
 under Settings → Music engine. Magenta makes the music on your Mac; Reimagine
-still asks Gemini. It isn't available on skuzic.vercel.app, which has no
+still asks Gemini. It isn't available on playkazoo.vercel.app, which has no
 bridge to talk to.
 
 On iPad/iPhone: open `ios/Skuzic.xcodeproj`, run, then **Settings** (gear) and
