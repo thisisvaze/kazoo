@@ -278,7 +278,17 @@ function HandSketch() {
 function Footer() {
   return (
     <footer className="experiment-footer">
-      <p>An experiment by Aaditya Vaze.</p>
+      <p>
+        An experiment by Aaditya Vaze. Made with{' '}
+        <a href="https://ai.google.dev/gemini-api" target="_blank" rel="noreferrer">
+          Gemini
+        </a>{' '}
+        and{' '}
+        <a href="https://deepmind.google/models/lyria/" target="_blank" rel="noreferrer">
+          Lyria
+        </a>
+        .
+      </p>
       <nav aria-label="Project">
         <a href={GITHUB} target="_blank" rel="noreferrer">
           GitHub
