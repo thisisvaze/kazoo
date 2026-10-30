@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import getStroke from 'perfect-freehand';
+import { Laptop } from 'lucide-react';
 import { WatercolorButton } from '@/components/ui/watercolor-button';
 import { KazooLogo } from '@/components/KazooLogo';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
@@ -15,7 +16,7 @@ const INKS = ['#2d7dd2', '#e2711d', '#7c3aed', '#6a994e', '#e26d9e', '#1b998b', 
 const [BLUE, ORANGE, , , , TEAL, RED, AMBER, INDIGO] = INKS;
 const BROWN = '#8b5a2b';
 
-/** The painted action and what to know before pressing it. */
+/** The painted action, or on phones and tablets, which get no studio, where to go instead. */
 function Start({
   onStart,
   returning,
@@ -32,7 +33,13 @@ function Start({
           {returning ? 'Back to studio' : 'Open studio'}
         </WatercolorButton>
       ) : (
-        <p className="experiment-note">The studio opens on a desktop or laptop.</p>
+        <>
+          <p className="experiment-laptop">
+            <Laptop aria-hidden="true" />
+            Kazoo plays on a laptop or desktop.
+          </p>
+          <p className="experiment-note">Open {location.host} on your computer.</p>
+        </>
       )}
     </div>
   );

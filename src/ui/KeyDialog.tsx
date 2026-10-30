@@ -85,7 +85,7 @@ export function KeyDialog({
               id="key-title"
               tabIndex={-1}
               autoFocus
-              className="font-display text-xl font-semibold tracking-[-0.02em] outline-none"
+              className="font-display text-[1.375rem] tracking-[-0.01em] outline-none"
             >
               {busy ? 'Lots of people are drawing right now' : demo ? 'Use your own Gemini key' : 'Connect your Gemini key'}
             </h2>

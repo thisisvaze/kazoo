@@ -20,40 +20,40 @@ colors:
   pencil-brown: "#8b5a2b"
 typography:
   display:
-    fontFamily: "Libre Franklin, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist Serif, ui-serif, Georgia, serif"
     fontSize: "clamp(2.5rem, 4.8vw, 4rem)"
     fontWeight: 650
     lineHeight: 1.08
     letterSpacing: "-0.045em"
   headline:
-    fontFamily: "Libre Franklin, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist Serif, ui-serif, Georgia, serif"
     fontSize: "clamp(2rem, 3.4vw, 2.75rem)"
     fontWeight: 700
     lineHeight: 0.98
     letterSpacing: "-0.03em"
   title:
-    fontFamily: "Libre Franklin, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist Serif, ui-serif, Georgia, serif"
     fontSize: "1.375rem"
     fontWeight: 700
     lineHeight: 1.25
     letterSpacing: "-0.015em"
   lead:
-    fontFamily: "Libre Franklin, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist Serif, ui-serif, Georgia, serif"
     fontSize: "1.1875rem"
     fontWeight: 400
     lineHeight: 1.625
   body:
-    fontFamily: "Libre Franklin, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist Serif, ui-serif, Georgia, serif"
     fontSize: "1.0625rem"
     fontWeight: 400
     lineHeight: 1.625
   body-sm:
-    fontFamily: "Libre Franklin, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist Serif, ui-serif, Georgia, serif"
     fontSize: "0.9375rem"
     fontWeight: 400
     lineHeight: 1.375
   label:
-    fontFamily: "Libre Franklin, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist Serif, ui-serif, Georgia, serif"
     fontSize: "0.8125rem"
     fontWeight: 600
     lineHeight: 1.375
@@ -87,7 +87,7 @@ components:
 
 **Creative North Star: "A box of coloured pencils on good paper"**
 
-Kazoo is for making art with music, and the landing looks like it: warm white paper, and every line on it drawn in the studio's own coloured pencils with the same paper grain. The colour lives in what is drawn: the visitor's lines and the example drawing. Everything else stays quiet and lined up, set in Libre Franklin in a warm charcoal, never pure black.
+Kazoo is for making art with music, and the landing looks like it: warm white paper, and every line on it drawn in the studio's own coloured pencils with the same paper grain. The colour lives in what is drawn: the visitor's lines and the example drawing. Everything else stays quiet and lined up, set in Geist Serif in a warm charcoal, never pure black.
 
 The page is a small playable experiment: one sun-and-sailboat scene draws itself, visitors add their own musical scribbles, and one button opens the studio. With reduced motion the scene rests finished. The user asked for an Experiments with Google feel and rejected the repeated hero and explanation sections (2026-10-07).
 
@@ -128,7 +128,7 @@ Warm paper, a warm charcoal for words, the studio's pencil box for drawing, and 
 
 ## Typography
 
-**Font:** Libre Franklin, self-hosted variable (100 to 900), with ui-sans-serif, system-ui, sans-serif. Synthetic faces are off (`font-synthesis: none`).
+**Font:** Geist Serif, self-hosted, with ui-serif, Georgia, serif. It has one weight, so hierarchy comes from size and colour. Synthetic faces are off (`font-synthesis: none`).
 
 ### Hierarchy
 - **Display** (650, `typography.display`, leading 1.08, tracking -0.045em): one centered title beneath the drawing. At small phone widths it balances over two lines.

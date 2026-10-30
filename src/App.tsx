@@ -1697,9 +1697,11 @@ export default function App() {
                   : status === 'connecting'
                     ? 'Starting the music…'
                     : status === 'error'
-                      ? `${statusDetail || 'Something went wrong. Try again.'}${
-                          apiKey ? '' : ' If the shared key is busy, use your own free key in Settings.'
-                        }`
+                      ? !apiKey && isBusy(statusDetail)
+                        ? 'Lots of people are drawing right now. Press play to try again, or use your own free key in Settings.'
+                        : `${statusDetail || 'Something went wrong. Try again.'}${
+                            apiKey ? '' : ' If the shared key is busy, use your own free key in Settings.'
+                          }`
                       : 'Start the music, then draw'
               }
               onAutoInterpret={() => void readDrawing()}

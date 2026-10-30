@@ -256,7 +256,7 @@
   font-size: var(--text-experiment-display);
   font-weight: 650;
   line-height: 1.08;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   overflow-wrap: anywhere;
 }
@@ -281,6 +281,22 @@
 .experiment-start button {
   max-width: 100%;
   white-space: nowrap;
+}
+
+.experiment-laptop {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-ink);
+  font-size: var(--text-experiment-body);
+  font-weight: 550;
+  line-height: 1.4;
+}
+
+.experiment-laptop svg {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
 }
 
 .experiment-note {
@@ -321,45 +337,17 @@
   }
 }
 
-/* Touch: bigger targets, and the nav wraps rather than squeezes. */
-@media (hover: none), (pointer: coarse) {
-  .theme-switcher button {
-    width: 2.5rem;
-    height: 2.75rem;
-  }
-
+/* Phones and tablets keep the header to the name; GitHub stays in the footer. */
+@media (max-width: 30rem), (hover: none), (pointer: coarse) {
   .experiment-header nav {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 0.25rem 0.5rem;
-    font-size: 0.8125rem;
+    display: none;
   }
 }
 
 @media (max-width: 30rem) {
-  .experiment-header .landing-pass {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    row-gap: 0.5rem;
-  }
-
-  .experiment-header nav {
-    display: contents;
-  }
-
-  .experiment-header .theme-switcher {
-    grid-area: 1 / 2;
-  }
-
-  .experiment-header nav > a {
-    grid-area: 2 / 1;
-    align-self: center;
-    font-size: 0.8125rem;
-  }
-
   .experiment-main {
     min-height: calc(100svh - 7rem);
-    padding-top: 9rem;
+    padding-top: 6rem;
   }
 
   .experiment-title {

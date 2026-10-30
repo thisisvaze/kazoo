@@ -1190,7 +1190,7 @@ export const DrawCanvas = forwardRef<CanvasHandle, Props>(function DrawCanvas(
           {!hasInk && !showStart && (
             <div className="pointer-events-none absolute inset-0 grid place-items-center px-6 text-center">
               <div>
-                <p className="font-display text-3xl font-semibold tracking-tight text-pencil/25 sm:text-4xl">
+                <p className="font-display text-3xl tracking-tight text-pencil/25 sm:text-4xl">
                   Draw anything
                 </p>
                 <p className="mt-2 text-sm text-pencil/40">The paper is listening</p>

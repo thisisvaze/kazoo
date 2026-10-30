@@ -26,7 +26,7 @@ export function KazooLogo({
       />
       <span
         aria-hidden="true"
-        className={cn('font-display text-[1.25rem] leading-none font-bold tracking-[0.01em]', compact && 'hidden sm:inline')}
+        className={cn('font-display text-[1.375rem] leading-none font-normal tracking-[-0.01em]', compact && 'hidden sm:inline')}
       >
         kazoo
       </span>

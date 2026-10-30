@@ -471,7 +471,7 @@ export function Mixer({
                   </div>
                   <div className="mt-2 flex min-h-8 items-center gap-3">
                     <div className="flex min-w-0 flex-1 items-center gap-2">
-                      <p className="truncate text-[1.0625rem] leading-snug font-semibold">{vibe.name}</p>
+                      <p className="truncate font-display text-[1.25rem] leading-snug">{vibe.name}</p>
                       <span className="shrink-0">{activity}</span>
                     </div>
                     {player}
